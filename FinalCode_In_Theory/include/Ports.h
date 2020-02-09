@@ -21,6 +21,8 @@ const static int LIFT_ZERO_SWITCH = 2;
 
 constexpr static double UNFOLD_OFFSET = 2;
 
+constexpr static double POSITION_CUBE_TIMEOUT = 2;
+
 
 
 

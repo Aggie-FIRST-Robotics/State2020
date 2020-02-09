@@ -25,7 +25,17 @@ DriveTrain drive = DriveTrain(Ports::DRIVE_TRAIN_TOP_LEFT_PORT, Ports::DRIVE_TRA
 Intake intake = Intake(Ports::INTAKE_PORT_0, Ports::INTAKE_PORT_1);
 Lift lift = Lift(Ports::LIFT_PORT_0, Ports::LIFT_PORT_1, Ports::LIFT_ZERO_SWITCH);
 Tray tray = Tray(Ports::TRAY_PORT_0, Ports::TRAY_PORT_1, Ports::TRAY_ZERO_SWITCH, Ports::TRAY_CUBE_SWITCH);
-controller Controller1 = controller(primary);
+
+vex::controller Controller = controller(primary);
+vex::controller::button BASE_BUTTON = Controller.ButtonA;
+vex::controller::button ARM1_BUTTON = Controller.ButtonB;
+vex::controller::button ARM2_BUTTON = Controller.ButtonX;
+vex::controller::button VERTICAL_BUTTON = Controller.ButtonY;
+
+double stored_time;
+bool stored_time_iswritable;
+vex::timer timer_;
+
 
 
 Enums::DriveTrain_State currentDriveTrainState = Enums::DriveTrain_State::DRIVE;
@@ -71,13 +81,13 @@ int main() {
       case Enums::System_State::BASE:
         intake.update(Enums::System_State::BASE);
         if (lift.update(Enums::System_State::BASE) && tray.update(Enums::System_State::BASE)){
-          Controller1.ButtonB.pressed([]() -> void {
+          ARM1_BUTTON.pressed([]() -> void {
             currentSystemState = Enums::System_State::ARM1;
             });
-          Controller1.ButtonX.pressed([]() -> void {
+          ARM2_BUTTON.pressed([]() -> void {
             currentSystemState = Enums::System_State::ARM2;
             });
-          Controller1.ButtonL1.pressed([]() -> void {
+          VERTICAL_BUTTON.pressed([]() -> void {
             currentSystemState = Enums::System_State::TRAY_VERTICAL;
             });
 
@@ -91,10 +101,10 @@ int main() {
         lift.update(Enums::System_State::ARM1);
         tray.update(Enums::System_State::ARM1);
         
-        Controller1.ButtonX.pressed([]() -> void {
+        ARM2_BUTTON.pressed([]() -> void {
             currentSystemState = Enums::System_State::ARM2;
             });
-        Controller1.ButtonA.pressed([]() -> void {
+        BASE_BUTTON.pressed([]() -> void {
             currentSystemState = Enums::System_State::BASE;
             });
           
@@ -107,10 +117,10 @@ int main() {
         lift.update(Enums::System_State::ARM2);
         tray.update(Enums::System_State::ARM2);
         
-        Controller1.ButtonB.pressed([]() -> void {
+        ARM1_BUTTON.pressed([]() -> void {
             currentSystemState = Enums::System_State::ARM1;
             });
-        Controller1.ButtonA.pressed([]() -> void {
+        BASE_BUTTON.pressed([]() -> void {
             currentSystemState = Enums::System_State::BASE;
             });
           
@@ -119,19 +129,36 @@ int main() {
 
 
         case Enums::System_State::POSITION_CUBES:
-        intake.update(Enums::System_State::TRAY_VERTICAL);
-        lift.update(Enums::System_State::TRAY_VERTICAL);
-        tray.update(Enums::System_State::TRAY_VERTICAL);
-
-        if(tray.cube_switch.value()){
+        
+        if(stored_time_iswritable){
+          stored_time = timer_.time(vex::timeUnits::sec) + Ports::POSITION_CUBE_TIMEOUT;
+          stored_time_iswritable = false;
+        }
+        else{
+          if(timer_.time(vex::timeUnits::sec) < stored_time){
+            intake.update(Enums::System_State::TRAY_VERTICAL);
+            lift.update(Enums::System_State::TRAY_VERTICAL);
+            tray.update(Enums::System_State::TRAY_VERTICAL);
+          }
+          else if(tray.cube_switch.value()){
             currentSystemState = Enums::TRAY_VERTICAL;
         }
+          else{
+
+            
+            stored_time_iswritable = true;
+            currentSystemState = Enums::BASE;
+          }
+  }
+       
+       
+
         break;
         case Enums::System_State::TRAY_VERTICAL:
         intake.update(Enums::System_State::TRAY_VERTICAL);
         lift.update(Enums::System_State::TRAY_VERTICAL);
         tray.update(Enums::System_State::TRAY_VERTICAL);
-        Controller1.ButtonA.pressed([]() -> void {
+        BASE_BUTTON.pressed([]() -> void {
             currentSystemState = Enums::System_State::BASE;
             });
         break;

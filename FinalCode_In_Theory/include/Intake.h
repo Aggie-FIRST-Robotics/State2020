@@ -7,6 +7,9 @@ public:
 vex::motor intake;
 vex::motor intake1;
 vex::controller Controller;
+vex::controller::button INTAKE_BUTTON;
+vex::controller::button OUTTAKE_BUTTON;
+
 double stored_time;
 bool stored_time_iswritable;
 vex::timer timer_;
@@ -56,11 +59,11 @@ bool update(Enums::System_State state){
   }
 }
 else if (state == Enums::System_State::BASE || state==Enums::System_State::ARM1 || state ==Enums::System_State::POSITION_CUBES){
-  if(Controller.ButtonL1.pressing()){
+  if(INTAKE_BUTTON.pressing()){
     intake_();
 
   }
-  else if(Controller.ButtonL2.pressing()){
+  else if(OUTTAKE_BUTTON.pressing()){
     outtake_();
   }
   else{
@@ -74,11 +77,11 @@ else if (state == Enums::System_State::BASE || state==Enums::System_State::ARM1 
 }
 
 else if(state == Enums::System_State::TRAY_VERTICAL){
-  if(Controller.ButtonL1.pressing()){
+  if(OUTTAKE_BUTTON.pressing()){
     move(0.5);
 
   }
-  else if(Controller.ButtonL2.pressing()){
+  else if(INTAKE_BUTTON.pressing()){
     move(-0.5);
   }
   else{
