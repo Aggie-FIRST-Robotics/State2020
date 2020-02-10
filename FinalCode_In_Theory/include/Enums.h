@@ -1,14 +1,6 @@
-#ifndef _enums_h_                              /* include file only once */
-#define _enums_h_
-class Enums{
-  public:
-     enum DriveTrain_State{DRIVE, OFF}; 
-     enum System_State{UNFOLD, UNFOLD_ARM_ZERO, TRAY_ZERO, BASE, ARM1, ARM2, ARM3, ARM_ZERO, POSITION_CUBES, TRAY_VERTICAL};
+#pragma once
 
-  
-
-
-
-
-};
-#endif _enums_h_
+enum DriveTrain_State{DRIVE, OFF}; 
+enum System_State{UNFOLD, UNFOLD_ARM_ZERO, TRAY_ZERO, BASE, ARM1, ARM2, ARM3, ARM_ZERO, POSITION_CUBES, TRAY_VERTICAL};
+enum Button_Enums{BUTTONA, BUTTONB, BUTTONY, BUTTONX, BUTTONL1, BUTTONL2, BUTTONR1, BUTTONR2, BUTTONUP, BUTTONRIGHT, BUTTONLEFT, BUTTONDOWN};
+enum Axis_Enums{AXIS1, AXIS2, AXIS3, AXIS4};

@@ -1,30 +1,31 @@
-#ifndef _ports_h_                              /* include file only once */
-#define _ports_h_
-class Ports{
-public:
-const static int DRIVE_TRAIN_TOP_LEFT_PORT =2;
-const static int DRIVE_TRAIN_BOTTOM_LEFT_PORT =15;
-const static int DRIVE_TRAIN_TOP_RIGHT_PORT =13;
-const static int DRIVE_TRAIN_BOTTOM_RIGHT_PORT =14;
+#pragma once
 
-const static int INTAKE_PORT_0 =2;
-const static int INTAKE_PORT_1 =10;
+namespace Ports
+{
+  constexpr int DRIVE_TRAIN_TOP_LEFT_PORT =2;
+  constexpr int DRIVE_TRAIN_BOTTOM_LEFT_PORT =15;
+  constexpr int DRIVE_TRAIN_TOP_RIGHT_PORT =13;
+  constexpr int DRIVE_TRAIN_BOTTOM_RIGHT_PORT =14;
 
-const static int TRAY_PORT_0 =17;
-const static int TRAY_PORT_1 =16;
-const static int TRAY_CUBE_SWITCH = 0;
-const static int TRAY_ZERO_SWITCH = 1;
+  constexpr int INTAKE_PORT_0 =2;
+  constexpr int INTAKE_PORT_1 =10;
 
-const static int LIFT_PORT_0 =17;
-const static int LIFT_PORT_1 =16;
-const static int LIFT_ZERO_SWITCH = 2;
+  constexpr int TRAY_PORT_0 =17;
+  constexpr int TRAY_PORT_1 =16;
+  constexpr int TRAY_CUBE_SWITCH = 0;
+  constexpr int TRAY_ZERO_SWITCH = 1;
 
-constexpr static double UNFOLD_OFFSET = 2;
+  constexpr int LIFT_PORT_0 =17;
+  constexpr int LIFT_PORT_1 =16;
+  constexpr int LIFT_ZERO_SWITCH = 2;
 
-constexpr static double POSITION_CUBE_TIMEOUT = 2;
+  constexpr double UNFOLD_OFFSET = 2;
 
+  constexpr double POSITION_CUBE_TIMEOUT = 2;
+  constexpr double TRAY_BASE_POSITION = 1;
+  constexpr double TRAY_VERTICAL_POSITION = 100;
 
-
-
-};
-#endif
+  constexpr double LIFT_BASE_POSITION = 1.0;
+  constexpr double  LIFT_BASE_POSITION1= -300.0;
+  constexpr double  LIFT_BASE_POSITION2= -450.0;
+}

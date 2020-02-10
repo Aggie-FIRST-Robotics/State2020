@@ -19,61 +19,68 @@
 #include "Ports.h"
 #include <functional>
 
+vex::brain robot_brain;
+vex::controller cont(primary);
 
-using namespace vex;
-DriveTrain drive = DriveTrain(Ports::DRIVE_TRAIN_TOP_LEFT_PORT, Ports::DRIVE_TRAIN_TOP_RIGHT_PORT, Ports::DRIVE_TRAIN_TOP_RIGHT_PORT, Ports::DRIVE_TRAIN_BOTTOM_RIGHT_PORT);
-Intake intake = Intake(Ports::INTAKE_PORT_0, Ports::INTAKE_PORT_1);
-Lift lift = Lift(Ports::LIFT_PORT_0, Ports::LIFT_PORT_1, Ports::LIFT_ZERO_SWITCH);
-Tray tray = Tray(Ports::TRAY_PORT_0, Ports::TRAY_PORT_1, Ports::TRAY_ZERO_SWITCH, Ports::TRAY_CUBE_SWITCH);
+DriveTrain drive(Ports::DRIVE_TRAIN_TOP_LEFT_PORT, 
+                 Ports::DRIVE_TRAIN_TOP_RIGHT_PORT, 
+                 Ports::DRIVE_TRAIN_TOP_RIGHT_PORT, 
+                 Ports::DRIVE_TRAIN_BOTTOM_RIGHT_PORT,
+                 &cont);
 
-vex::controller Controller = controller(primary);
-vex::controller::button BASE_BUTTON = Controller.ButtonA;
-vex::controller::button ARM1_BUTTON = Controller.ButtonB;
-vex::controller::button ARM2_BUTTON = Controller.ButtonX;
-vex::controller::button VERTICAL_BUTTON = Controller.ButtonY;
+Intake intake(Ports::INTAKE_PORT_0, 
+              Ports::INTAKE_PORT_1,
+              &cont);
+
+Lift lift(Ports::LIFT_PORT_0, 
+          Ports::LIFT_PORT_1, 
+          Ports::LIFT_ZERO_SWITCH,
+          &robot_brain);
+
+Tray tray(Ports::TRAY_PORT_0, 
+          Ports::TRAY_PORT_1, 
+          Ports::TRAY_ZERO_SWITCH, 
+          Ports::TRAY_CUBE_SWITCH,
+          &robot_brain);
 
 double stored_time;
 bool stored_time_iswritable;
 vex::timer timer_;
 
+DriveTrain_State currentDriveTrainState = DriveTrain_State::DRIVE;
+System_State currentSystemState = System_State::UNFOLD;
 
-
-Enums::DriveTrain_State currentDriveTrainState = Enums::DriveTrain_State::DRIVE;
-
-
-Enums::System_State currentSystemState = Enums::System_State::UNFOLD;
-
-
-
-
-int main() {
+int main()
+{
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
-  while(true){
-    switch(currentDriveTrainState){
-      case Enums::DriveTrain_State::DRIVE:
-        drive.update(Enums::DriveTrain_State::DRIVE);
-        currentDriveTrainState = Enums::DriveTrain_State::DRIVE;
-        break;
-
-      
+  while(true)
+  {
+    switch(currentDriveTrainState)
+    {
+      case DRIVE:
+        drive.update(DriveTrain_State::DRIVE);
+        currentDriveTrainState = DriveTrain_State::DRIVE;
+        break; 
     }
 
-    switch(currentSystemState){
-      case Enums::System_State::UNFOLD:
+    switch(currentSystemState)
+    {
+      case UNFOLD:
 
-        intake.update(Enums::System_State::UNFOLD);
+        intake.update(System_State::UNFOLD);
         break;
 
-      case Enums::System_State::UNFOLD_ARM_ZERO:
-        if(intake.update(Enums::System_State::UNFOLD_ARM_ZERO))
-        currentSystemState = Enums::System_State::TRAY_ZERO;
+      case UNFOLD_ARM_ZERO:
+        if(intake.update(System_State::UNFOLD_ARM_ZERO))
+        {
+          currentSystemState = System_State::TRAY_ZERO;
+        }
         break;
 
+      case TRAY_ZERO:
 
-      case Enums::System_State::TRAY_ZERO:
-
-        if(lift.update(Enums::System_State::TRAY_ZERO)&&tray.update(Enums::System_State::TRAY_ZERO))
+        if(lift.update(TRAY_ZERO) && tray.update(TRAY_ZERO))
         currentSystemState = Enums::System_State::BASE;
        break;
 
@@ -161,20 +168,9 @@ int main() {
         BASE_BUTTON.pressed([]() -> void {
             currentSystemState = Enums::System_State::BASE;
             });
-        break;
-        
-
-      
+        break;    
     }
-
-    
-
-
-
-
   }
-
-  
 }
 
 
