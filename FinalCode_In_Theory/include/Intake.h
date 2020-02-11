@@ -17,7 +17,7 @@ public:
 
   void joystickIntake(int32_t power);
 
-  bool update(System_State state);
+  void update(System_State state);
 
 private:
   V5_DeviceT intake;

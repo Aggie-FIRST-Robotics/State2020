@@ -22,7 +22,13 @@ public:
 
   void zeroEncoder();
 
-  bool update(System_State state);
+  void update(System_State state);
+
+  bool getLimitSwitch();
+
+  bool getCubeSwitch();
+
+  double getTrayRotation();
 
 private:
   V5_DeviceT traymotor;
@@ -35,6 +41,4 @@ private:
 
   static constexpr double ERROR_THRESHOLD = 3.0;
   static constexpr double P = 0.71;
-
-  double getTrayRotation();
 };

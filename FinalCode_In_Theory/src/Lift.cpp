@@ -60,40 +60,35 @@ void Lift::movebyJoy(int32_t vel)
 //  Brain.Screen.print("Claw rotation: %f degrees",motor_claw.rotation(vex::rotationUnits::deg));
 }
 
-bool Lift::update(System_State state)
+void Lift::update(System_State state)
 {
-  if(state == System_State::UNFOLD_ARM_ZERO) //TODO: potential bug here
+  if(state == UNFOLD_ARM_ZERO || state == ARM_ZERO)
   {
-    if(!zero_switch.value())
-    {
-      moveConst(-6000);
-    }
-    else
-    {
-      zeroEncoder();
-      return true;
-    }
+    moveConst(-6000);
   }
-  else if (state == System_State::TRAY_ZERO || 
-           state == System_State::BASE || 
-           state == System_State::POSITION_CUBES || 
-           state == System_State::TRAY_VERTICAL)
+  else if (state == TRAY_ZERO || 
+           state == BASE || 
+           state == POSITION_CUBES || 
+           state == TRAY_VERTICAL)
   {
-    return movePosition(Ports::LIFT_BASE_POSITION);
+    movePosition(Ports::LIFT_BASE_POSITION);
   }
-  else if(state == System_State::ARM1)
+  else if(state == ARM1)
   {
-    return movePosition(Ports::LIFT_BASE_POSITION1);
+    movePosition(Ports::LIFT_BASE_POSITION1);
   }
-  else if(state == System_State::ARM2)
+  else if(state == ARM2)
   {
-    return movePosition(Ports::LIFT_BASE_POSITION2);
+    movePosition(Ports::LIFT_BASE_POSITION2);
   }
-
-  return false;
 }
 
 double Lift::getLiftRotation()
 {
   return vexDeviceMotorPositionGet(liftmotor) - liftmotor_base;
+}
+
+bool Lift::getLimitSwitch()
+{
+  return zero_switch.value() == 0;
 }

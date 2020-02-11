@@ -23,20 +23,32 @@ void DriveTrain::arcadeDrive(int32_t forward, int32_t turn)
 
 void DriveTrain::RealDrive(int32_t left, int32_t right)
 {
-  vexDeviceMotorVoltageSet(topleftMotor, left);
-  vexDeviceMotorVoltageSet(toprightMotor, right);
-  vexDeviceMotorVoltageSet(bottomleftMotor, left);
-  vexDeviceMotorVoltageSet(bottomrightMotor, right);
+  int32_t modifiedleft;
+  int32_t modifiedright;
+
+  if(abs(left)>0.05){
+    modifiedleft = 0;
+  }
+  else{
+    modifiedleft = left*left;
+  }
+  if(abs(right)>0.05){
+    modifiedright = 0;
+  }
+  else{
+    modifiedright = right*right;
+  }
+  vexDeviceMotorVoltageSet(topleftMotor, modifiedleft);
+  vexDeviceMotorVoltageSet(toprightMotor, modifiedright);
+  vexDeviceMotorVoltageSet(bottomleftMotor, modifiedleft);
+  vexDeviceMotorVoltageSet(bottomrightMotor, modifiedright);
 }
 
-bool DriveTrain::update(DriveTrain_State state)
+void DriveTrain::update(DriveTrain_State state)
 {
-  if(state == DriveTrain_State::DRIVE)
+  if(state == DRIVE)
   {
-    arcadeDrive(JoystickAxis(*controller_ptr, joystick_config::FORWARD_AXIS), 
+    RealDrive(JoystickAxis(*controller_ptr, joystick_config::FORWARD_AXIS), 
                 JoystickAxis(*controller_ptr, joystick_config::TURN_AXIS));
-    return true;
   }
-
-  return false;
 }

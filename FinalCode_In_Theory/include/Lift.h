@@ -21,7 +21,11 @@ public:
 
   void zeroEncoder();
 
-  bool update(System_State state);
+  void update(System_State state);
+
+  bool getLimitSwitch();
+
+  double getLiftRotation();
 
 private:
   V5_DeviceT liftmotor;
@@ -33,6 +37,4 @@ private:
   
   static constexpr double error_treshold = 3.0;
   static constexpr double P = 0.71;
-
-  double getLiftRotation();
 };

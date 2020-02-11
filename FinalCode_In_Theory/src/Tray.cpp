@@ -63,35 +63,36 @@ void Tray::zeroEncoder()
   traymotor_base = vexDeviceMotorPositionGet(traymotor);
 }
 
-bool Tray::update(System_State state)
+void Tray::update(System_State state)
 {
-  if(state == System_State::TRAY_ZERO) // TODO: potential bug here
+  if(state == TRAY_ZERO)
   {
-    if(!zero_switch.value()){
-      moveConst(-6000);
-    }
-    else
-    {
-      zeroEncoder();
-      return true;
-    }
+    moveConst(-6000);
   }
-  else if (state == System_State::BASE || 
-          state == System_State::ARM1 || 
-          state == System_State::ARM2 || 
-          state == System_State::POSITION_CUBES )
+  else if (state == BASE || 
+          state == ARM1 || 
+          state == ARM2 || 
+          state == POSITION_CUBES )
   {
-    return movePosition(Ports::TRAY_BASE_POSITION);
+    movePosition(Ports::TRAY_BASE_POSITION);
   }
-  else if (state == System_State::TRAY_VERTICAL)
+  else if (state == TRAY_VERTICAL)
   {
-      return movePosition(Ports::TRAY_VERTICAL_POSITION);
+    movePosition(Ports::TRAY_VERTICAL_POSITION);
   }
-
-  return false;
 }
 
 double Tray::getTrayRotation()
 {
   return vexDeviceMotorPositionGet(traymotor) - traymotor_base;
+}
+
+bool Tray::getLimitSwitch()
+{
+  return zero_switch.value() == 0;
+}
+
+bool Tray::getCubeSwitch()
+{
+  return cube_switch.value() == 0;
 }

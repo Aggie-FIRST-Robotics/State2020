@@ -22,6 +22,7 @@
 vex::brain robot_brain;
 vex::controller cont(primary);
 
+
 DriveTrain drive(Ports::DRIVE_TRAIN_TOP_LEFT_PORT, 
                  Ports::DRIVE_TRAIN_TOP_RIGHT_PORT, 
                  Ports::DRIVE_TRAIN_TOP_RIGHT_PORT, 
@@ -54,121 +55,133 @@ int main()
 {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
+  timer_.reset();
+
   while(true)
   {
+
+    drive.update(currentDriveTrainState);
+    intake.update(currentSystemState);
+    lift.update(currentSystemState);
+    tray.update(currentSystemState);
+
     switch(currentDriveTrainState)
     {
       case DRIVE:
-        drive.update(DriveTrain_State::DRIVE);
-        currentDriveTrainState = DriveTrain_State::DRIVE;
-        break; 
+        break;
+
+      case OFF:
+        break;
     }
 
     switch(currentSystemState)
     {
       case UNFOLD:
-
-        intake.update(System_State::UNFOLD);
+        if(timer_.time(seconds) > Ports::UNFOLD_TIME)
+        {
+          currentSystemState = UNFOLD_ARM_ZERO;
+        }
+        
         break;
 
       case UNFOLD_ARM_ZERO:
-        if(intake.update(System_State::UNFOLD_ARM_ZERO))
+        if(lift.getLimitSwitch())
         {
-          currentSystemState = System_State::TRAY_ZERO;
+          lift.zeroEncoder();
+          currentSystemState = TRAY_ZERO;
+        }
+        break;
+
+      case ARM_ZERO:
+        if(lift.getLimitSwitch())
+        {
+          lift.zeroEncoder();
+          currentSystemState = BASE;
         }
         break;
 
       case TRAY_ZERO:
 
-        if(lift.update(TRAY_ZERO) && tray.update(TRAY_ZERO))
-        currentSystemState = Enums::System_State::BASE;
+        if(tray.getLimitSwitch())
+        {
+          tray.zeroEncoder();
+          currentSystemState = BASE;
+        }
        break;
 
+      case BASE:
 
-      case Enums::System_State::BASE:
-        intake.update(Enums::System_State::BASE);
-        if (lift.update(Enums::System_State::BASE) && tray.update(Enums::System_State::BASE)){
-          ARM1_BUTTON.pressed([]() -> void {
-            currentSystemState = Enums::System_State::ARM1;
-            });
-          ARM2_BUTTON.pressed([]() -> void {
-            currentSystemState = Enums::System_State::ARM2;
-            });
-          VERTICAL_BUTTON.pressed([]() -> void {
-            currentSystemState = Enums::System_State::TRAY_VERTICAL;
-            });
-
-
+        if (JoystickButtonPressed(cont, joystick_config::ARM1_BUTTON))
+        {
+            currentSystemState = ARM1;
+        }
+        else if (JoystickButtonPressed(cont, joystick_config::ARM2_BUTTON))
+        {
+            currentSystemState = ARM2;
+        }
+        else if (JoystickButtonPressed(cont, joystick_config::VERTICAL_BUTTON))
+        {
+            timer_.reset();
+            currentSystemState = TRAY_VERTICAL;
+        }
+        else if (JoystickButtonPressed(cont, joystick_config::UNFOLD_BUTTON))
+        {
+            timer_.reset();
+            currentSystemState = UNFOLD;
         }
         
         break;
-        case Enums::System_State::ARM1:
 
-        intake.update(Enums::System_State::ARM1);
-        lift.update(Enums::System_State::ARM1);
-        tray.update(Enums::System_State::ARM1);
-        
-        ARM2_BUTTON.pressed([]() -> void {
-            currentSystemState = Enums::System_State::ARM2;
-            });
-        BASE_BUTTON.pressed([]() -> void {
-            currentSystemState = Enums::System_State::BASE;
-            });
-          
+      case ARM1:
+
+        if (JoystickButtonPressed(cont, joystick_config::ARM2_BUTTON))
+        {
+            currentSystemState = ARM2;
+        }
+        else if (JoystickButtonPressed(cont, joystick_config::BASE_BUTTON))
+        {
+            currentSystemState = ARM_ZERO;
+        }
 
         break;
       
-        case Enums::System_State::ARM2:
-
-        intake.update(Enums::System_State::ARM2);
-        lift.update(Enums::System_State::ARM2);
-        tray.update(Enums::System_State::ARM2);
+      case ARM2:
         
-        ARM1_BUTTON.pressed([]() -> void {
-            currentSystemState = Enums::System_State::ARM1;
-            });
-        BASE_BUTTON.pressed([]() -> void {
-            currentSystemState = Enums::System_State::BASE;
-            });
+        if (JoystickButtonPressed(cont, joystick_config::ARM1_BUTTON))
+        {
+            currentSystemState = ARM1;
+        }
+        else if (JoystickButtonPressed(cont, joystick_config::BASE_BUTTON))
+        {
+            currentSystemState = ARM_ZERO;
+        }
           
-
         break;
 
 
-        case Enums::System_State::POSITION_CUBES:
-        
-        if(stored_time_iswritable){
-          stored_time = timer_.time(vex::timeUnits::sec) + Ports::POSITION_CUBE_TIMEOUT;
-          stored_time_iswritable = false;
+      case POSITION_CUBES:
+        if(timer_.time(seconds) > Ports::POSITION_TIME)
+        {
+          currentSystemState = TRAY_ZERO;
         }
-        else{
-          if(timer_.time(vex::timeUnits::sec) < stored_time){
-            intake.update(Enums::System_State::TRAY_VERTICAL);
-            lift.update(Enums::System_State::TRAY_VERTICAL);
-            tray.update(Enums::System_State::TRAY_VERTICAL);
-          }
-          else if(tray.cube_switch.value()){
-            currentSystemState = Enums::TRAY_VERTICAL;
+        else if(JoystickButtonPressed(cont, joystick_config::BASE_BUTTON))
+        {
+          currentSystemState = TRAY_ZERO;
         }
-          else{
-
-            
-            stored_time_iswritable = true;
-            currentSystemState = Enums::BASE;
-          }
-  }
-       
-       
+        else if(tray.getCubeSwitch())
+        {
+          currentSystemState = TRAY_VERTICAL;
+        }
 
         break;
-        case Enums::System_State::TRAY_VERTICAL:
-        intake.update(Enums::System_State::TRAY_VERTICAL);
-        lift.update(Enums::System_State::TRAY_VERTICAL);
-        tray.update(Enums::System_State::TRAY_VERTICAL);
-        BASE_BUTTON.pressed([]() -> void {
-            currentSystemState = Enums::System_State::BASE;
-            });
-        break;    
+
+      case TRAY_VERTICAL:
+        if(JoystickButtonPressed(cont, joystick_config::BASE_BUTTON))
+        {
+          currentSystemState = TRAY_ZERO;
+        }
+        break;
+
     }
   }
 }

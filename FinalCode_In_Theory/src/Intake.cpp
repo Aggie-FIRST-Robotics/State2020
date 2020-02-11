@@ -31,25 +31,20 @@ void Intake::joystickIntake(int32_t power)
   }
 }
 
-bool Intake::update(System_State state)
+void Intake::update(System_State state)
 {
-  if(state == System_State::UNFOLD)
+  if(state == UNFOLD)
   {
     moveConst(-12000);
-    return true;
   }
-  else if (state == System_State::BASE || 
-            state == System_State::ARM1 || 
-            state == System_State::ARM2)
+  else if (state == BASE || 
+            state == ARM1 || 
+            state == ARM2)
   {
     joystickIntake(12000);
-    return true;
   }
-  else if(state == System_State::TRAY_VERTICAL)
+  else if(state == TRAY_VERTICAL)
   {
     joystickIntake(6000);
-    return true;
   }
-  
-  return false;
 }
