@@ -19,9 +19,8 @@
 #include "Ports.h"
 #include <functional>
 
-vex::brain robot_brain;
 vex::controller cont(primary);
-
+vex::triport tri(PORT22);
 
 DriveTrain drive(Ports::DRIVE_TRAIN_TOP_LEFT_PORT, 
                  Ports::DRIVE_TRAIN_TOP_RIGHT_PORT, 
@@ -36,13 +35,13 @@ Intake intake(Ports::INTAKE_PORT_0,
 Lift lift(Ports::LIFT_PORT_0, 
           Ports::LIFT_PORT_1, 
           Ports::LIFT_ZERO_SWITCH,
-          &robot_brain);
+          &Brain);
 
 Tray tray(Ports::TRAY_PORT_0, 
           Ports::TRAY_PORT_1, 
-          Ports::TRAY_ZERO_SWITCH, 
-          Ports::TRAY_CUBE_SWITCH,
-          &robot_brain);
+          &(tri.B), 
+          &(tri.A),
+          &Brain);
 
 double stored_time;
 bool stored_time_iswritable;
@@ -57,7 +56,7 @@ int main()
   vexcodeInit();
   timer_.reset();
 
-  while(true)
+  /*while(true)
   {
 
     drive.update(currentDriveTrainState);
@@ -184,6 +183,50 @@ int main()
 
     }
   }
+
+  */
+
+  while(true){
+    lift.movebyJoy(JoystickAxis(cont, AXIS1));
+    tray.movebyJoy(JoystickAxis(cont, AXIS3));
+
+    Brain.Screen.clearLine(0,vex::color::black);
+    Brain.Screen.clearLine(1,vex::color::black);
+    Brain.Screen.clearLine(2,vex::color::black);
+    Brain.Screen.clearLine(3,vex::color::black);
+    Brain.Screen.clearLine(4,vex::color::black);
+  
+    Brain.Screen.setCursor(1,1);
+    Brain.Screen.print("Tray Cube Switch: %d, Tray Limit Switch: %d",tray.getCubeSwitch() , tray.getLimitSwitch());
+
+    Brain.Screen.setCursor(2,1);
+    Brain.Screen.print("Tray Arm Rotation; %d", tray.getTrayRotation());
+
+    Brain.Screen.setCursor(3,1);
+    Brain.Screen.print("Lift Limit Switch: %d", lift.getLimitSwitch());
+
+    Brain.Screen.setCursor(4,1);
+    Brain.Screen.print("Lift Arm Rotation: %d", lift.getLiftRotation());
+    Brain.Screen.setCursor(5,1);
+    Brain.Screen.print(timer_.time(vex::timeUnits::sec));
+
+    if(tray.getLimitSwitch())
+        {
+          tray.zeroEncoder();
+        }
+    if(JoystickButtonPressed(cont, joystick_config::ARM1_BUTTON))
+        {
+          lift.zeroEncoder();
+        }
+    Brain.Screen.render();
+
+
+
+
+  }
+
+
+
 }
 
 
