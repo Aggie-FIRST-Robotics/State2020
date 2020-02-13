@@ -10,7 +10,7 @@ class Lift
 public:
   Lift(int liftmotorport, 
        int liftmotorport1, 
-       int limitswitchport,
+       vex::triport::port limitswitchport,
        vex::brain *brain_p);
 
   bool movePosition(double position);
@@ -25,12 +25,12 @@ public:
 
   bool getLimitSwitch();
 
-  double getLiftRotation();
+  uint32_t getLiftRotation();
 
 private:
   V5_DeviceT liftmotor;
   V5_DeviceT liftmotor1;
-  vex::triport zero_switch;
+  vex::limit zero_switch;
   vex::brain *brain_ptr;
 
   double liftmotor_base;

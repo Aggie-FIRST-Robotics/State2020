@@ -2,13 +2,13 @@
 
 Tray::Tray(int traymotorport, 
            int traymotor1port, 
-           int zero_switch_port, 
-           int cube_switch_port,
+           vex::triport::port *zero_switch_port, 
+           vex::triport::port *cube_switch_port,
            vex::brain *brain_p) : 
   traymotor(vexDeviceGetByIndex(traymotorport - 1)), 
   traymotor1(vexDeviceGetByIndex(traymotor1port - 1)), 
-  zero_switch(zero_switch_port), 
-  cube_switch(cube_switch_port),
+  zero_switch(*zero_switch_port), 
+  cube_switch(*cube_switch_port),
   brain_ptr(brain_p),
   traymotor_base(0.0)
 {
@@ -82,17 +82,18 @@ void Tray::update(System_State state)
   }
 }
 
-double Tray::getTrayRotation()
+int32_t Tray::getTrayRotation()
 {
-  return vexDeviceMotorPositionGet(traymotor) - traymotor_base;
+  uint32_t time;
+  return vexDeviceMotorPositionRawGet(traymotor, &time) - traymotor_base;
 }
 
 bool Tray::getLimitSwitch()
 {
-  return zero_switch.value() == 0;
+  return zero_switch.value();
 }
 
 bool Tray::getCubeSwitch()
 {
-  return cube_switch.value() == 0;
+  return cube_switch.value();
 }

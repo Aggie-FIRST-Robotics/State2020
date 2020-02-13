@@ -9,10 +9,10 @@ class Tray
 {
 public:
   Tray(int traymotorport, 
-       int traymotor1port, 
-       int zero_switch_port, 
-       int cube_switch_port,
-       vex::brain *brain_p);
+      int traymotor1port, 
+      vex::triport::port *zero_switch_port, 
+      vex::triport::port *cube_switch_port,
+      vex::brain *brain_p);
  
   bool movePosition(double position);
 
@@ -28,13 +28,13 @@ public:
 
   bool getCubeSwitch();
 
-  double getTrayRotation();
+  int32_t getTrayRotation();
 
 private:
   V5_DeviceT traymotor;
   V5_DeviceT traymotor1;
-  vex::triport zero_switch;
-  vex::triport cube_switch;
+  vex::limit zero_switch;
+  vex::limit cube_switch;
   vex::brain *brain_ptr;
 
   double traymotor_base;

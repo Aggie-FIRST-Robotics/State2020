@@ -21,6 +21,7 @@
 
 vex::brain robot_brain;
 vex::controller cont(primary);
+vex::triport tri(PORT22);
 
 
 DriveTrain drive(Ports::DRIVE_TRAIN_TOP_LEFT_PORT, 
@@ -40,8 +41,8 @@ Lift lift(Ports::LIFT_PORT_0,
 
 Tray tray(Ports::TRAY_PORT_0, 
           Ports::TRAY_PORT_1, 
-          Ports::TRAY_ZERO_SWITCH, 
-          Ports::TRAY_CUBE_SWITCH,
+         &(tri.B), 
+          &(tri.A),
           &robot_brain);
 
 double stored_time;

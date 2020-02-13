@@ -2,7 +2,7 @@
 
 Lift::Lift(int liftmotorport, 
            int liftmotorport1, 
-           int limitswitchport,
+           vex::triport::port limitswitchport,
            vex::brain *brain_p) :    
   liftmotor(vexDeviceGetByIndex(liftmotorport - 1)), 
   liftmotor1(vexDeviceGetByIndex(liftmotorport1 - 1)), 
@@ -83,12 +83,13 @@ void Lift::update(System_State state)
   }
 }
 
-double Lift::getLiftRotation()
+uint32_t Lift::getLiftRotation()
 {
-  return vexDeviceMotorPositionGet(liftmotor) - liftmotor_base;
+  uint32_t time;
+  return vexDeviceMotorPositionRawGet(liftmotor, &time) - liftmotor_base;
 }
 
 bool Lift::getLimitSwitch()
 {
-  return zero_switch.value() == 0;
+  return zero_switch.value();
 }
