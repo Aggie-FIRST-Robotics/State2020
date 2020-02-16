@@ -20,6 +20,7 @@ class DriveTrain
   void RealDrive(int32_t left, int32_t right);
 
   void update(DriveTrain_State state);
+  void updateSystemState(System_State state);
 
 private:
   V5_DeviceT topleftMotor;

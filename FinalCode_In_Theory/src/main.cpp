@@ -67,6 +67,7 @@ void teleop(){
     Brain.Screen.clearScreen();
 
     drive.update(currentDriveTrainState);
+    drive.updateSystemState(currentSystemState);
     intake.update(currentSystemState);
     lift.update(currentSystemState);
     tray.update(currentSystemState);
@@ -251,6 +252,7 @@ void teleop(){
           tray.setPIDBounds(-6000, 6000);
           tray.setTargetPos(Ports::TRAY_VERTICAL_POSITION);
           init_system_state = false;
+          timer_.reset();
         }
 
         if(JoystickButtonPressed(cont, joystick_config::BASE_BUTTON))
