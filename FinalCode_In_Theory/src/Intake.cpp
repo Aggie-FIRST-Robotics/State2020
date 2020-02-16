@@ -11,8 +11,8 @@ Intake::Intake(int intakeport,
 
 void Intake::moveConst(int32_t speed)
 {
-  vexDeviceMotorVoltageSet(intake, speed);
-  vexDeviceMotorVoltageSet(intake1, -speed);
+  vexDeviceMotorVoltageSet(intake, -speed);
+  vexDeviceMotorVoltageSet(intake1, speed);
 }
 
 void Intake::joystickIntake(int32_t power)
@@ -42,6 +42,10 @@ void Intake::update(System_State state)
             state == ARM2)
   {
     joystickIntake(12000);
+  }
+  else if (state == POSITION_CUBES)
+  {
+    moveConst(-6000);
   }
   else if(state == TRAY_VERTICAL)
   {

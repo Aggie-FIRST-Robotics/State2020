@@ -3,6 +3,7 @@
 #include <cmath>
 #include "Ports.h"
 #include "Enums.h"
+#include "PID.h"
 #include "vex.h"
 
 class Tray
@@ -14,7 +15,7 @@ public:
       vex::triport::port *cube_switch_port,
       vex::brain *brain_p);
  
-  bool movePosition(double position);
+  void movePID();
 
   void moveConst(int32_t vel);
 
@@ -30,15 +31,25 @@ public:
 
   int32_t getTrayRotation();
 
+  void setPIDBounds(int32_t min_power, int32_t max_power);
+
+  void setTargetPos(int32_t target);
+
+  void stopPID();
+
 private:
   V5_DeviceT traymotor;
   V5_DeviceT traymotor1;
   vex::limit zero_switch;
   vex::limit cube_switch;
   vex::brain *brain_ptr;
+  PID<double> tray_pid;
 
   double traymotor_base;
 
-  static constexpr double ERROR_THRESHOLD = 3.0;
-  static constexpr double P = 0.71;
+  static constexpr double P = 100;
+  static constexpr double I = 10;
+  static constexpr double D = 0;
+
+  void setMotors(int32_t input);
 };

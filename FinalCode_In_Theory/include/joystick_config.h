@@ -14,6 +14,6 @@ namespace joystick_config{
 
   static constexpr Axis_Enums FORWARD_AXIS = Axis_Enums::AXIS2;
   static constexpr Axis_Enums TURN_AXIS = Axis_Enums::AXIS4;
-  static constexpr Axis_Enums LEFT_AXIS = Axis_Enums::AXIS2;
-  static constexpr Axis_Enums RIGHT_AXIS = Axis_Enums::AXIS4;
+  static constexpr Axis_Enums LEFT_AXIS = Axis_Enums::AXIS3;
+  static constexpr Axis_Enums RIGHT_AXIS = Axis_Enums::AXIS2;
 };

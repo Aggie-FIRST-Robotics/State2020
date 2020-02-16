@@ -10,46 +10,24 @@ Tray::Tray(int traymotorport,
   zero_switch(*zero_switch_port), 
   cube_switch(*cube_switch_port),
   brain_ptr(brain_p),
+  tray_pid(0, P, I, D, -12000, 12000, -12000, 12000),
   traymotor_base(0.0)
 {
 }
 
-bool Tray::movePosition(double position)
+void Tray::movePID()
 {
-  double error = position - getTrayRotation();
-  
-  if(std::abs(error)>ERROR_THRESHOLD)
-  {
-    vexDeviceMotorVoltageSet(traymotor, P*error);
-    vexDeviceMotorVoltageSet(traymotor1, -P*error);
-    
-    brain_ptr->Screen.clearLine(0,vex::color::black);
-    brain_ptr->Screen.clearLine(1,vex::color::black);
-    brain_ptr->Screen.clearLine(2,vex::color::black);
-    brain_ptr->Screen.setCursor(1,0);
-    //  Brain.Screen.print("Position: ",error);
-
-    brain_ptr->Screen.setCursor(2,0);
-    brain_ptr->Screen.print("Arm rotation: %f degrees", getTrayRotation());
-
-    return false;  
-  }
-
-  vexDeviceMotorVoltageSet(traymotor, 0);
-  vexDeviceMotorVoltageSet(traymotor1, 0);
-  return true;
+  setMotors((int32_t) tray_pid.compute(getTrayRotation()));
 }
 
 void Tray::moveConst(int32_t vel)
 {
-  vexDeviceMotorVoltageSet(traymotor, vel);
-  vexDeviceMotorVoltageSet(traymotor1, -vel);
+  setMotors(vel);
 }
 
 void Tray::movebyJoy(int32_t vel)
 {
-  vexDeviceMotorVoltageSet(traymotor, vel);
-  vexDeviceMotorVoltageSet(traymotor1, -vel);
+  setMotors(vel);
   brain_ptr->Screen.clearLine(0,vex::color::black);
   brain_ptr->Screen.clearLine(1,vex::color::black);
   brain_ptr->Screen.setCursor(1,0);
@@ -72,13 +50,15 @@ void Tray::update(System_State state)
   else if (state == BASE || 
           state == ARM1 || 
           state == ARM2 || 
-          state == POSITION_CUBES )
+          state == POSITION_CUBES ||
+          state == ARM_ZERO ||
+          state == TRAY_VERTICAL)
   {
-    movePosition(Ports::TRAY_BASE_POSITION);
+    movePID();
   }
-  else if (state == TRAY_VERTICAL)
+  else if (state == UNFOLD_ARM_ZERO || UNFOLD)
   {
-    movePosition(Ports::TRAY_VERTICAL_POSITION);
+    moveConst(0);
   }
 }
 
@@ -90,10 +70,32 @@ int32_t Tray::getTrayRotation()
 
 bool Tray::getLimitSwitch()
 {
-  return zero_switch.value();
+  return zero_switch.pressing();
 }
 
 bool Tray::getCubeSwitch()
 {
-  return cube_switch.value();
+  return cube_switch.pressing();
+}
+
+void Tray::setMotors(int32_t input)
+{
+    vexDeviceMotorVoltageSet(traymotor, input);
+    vexDeviceMotorVoltageSet(traymotor1, -input);  
+}
+
+void Tray::setPIDBounds(int32_t min_power, int32_t max_power)
+{
+  tray_pid.setBounds(min_power, max_power);
+  tray_pid.setIBounds(min_power, max_power);
+}
+
+void Tray::setTargetPos(int32_t target)
+{
+  tray_pid.setTarget(target);
+}
+
+void Tray::stopPID()
+{
+  tray_pid.stop();
 }

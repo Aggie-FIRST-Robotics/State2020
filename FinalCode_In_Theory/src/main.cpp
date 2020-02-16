@@ -17,16 +17,21 @@
 #include "Tray.h"
 #include "Lift.h"
 #include "Ports.h"
-#include <functional>
 
-vex::brain robot_brain;
-vex::controller cont(primary);
+void setDriveState(DriveTrain_State new_state);
+void setSystemState(System_State new_state);
+
+bool init_drive_state;
+bool init_system_state;
+DriveTrain_State currentDriveTrainState;
+System_State currentSystemState;
+
+vex::controller cont(vex::controllerType::primary);
 vex::triport tri(PORT22);
-
 
 DriveTrain drive(Ports::DRIVE_TRAIN_TOP_LEFT_PORT, 
                  Ports::DRIVE_TRAIN_TOP_RIGHT_PORT, 
-                 Ports::DRIVE_TRAIN_TOP_RIGHT_PORT, 
+                 Ports::DRIVE_TRAIN_BOTTOM_LEFT_PORT, 
                  Ports::DRIVE_TRAIN_BOTTOM_RIGHT_PORT,
                  &cont);
 
@@ -36,30 +41,30 @@ Intake intake(Ports::INTAKE_PORT_0,
 
 Lift lift(Ports::LIFT_PORT_0, 
           Ports::LIFT_PORT_1, 
-          Ports::LIFT_ZERO_SWITCH,
-          &robot_brain);
+          &(tri.C),
+          &Brain);
 
 Tray tray(Ports::TRAY_PORT_0, 
           Ports::TRAY_PORT_1, 
          &(tri.B), 
           &(tri.A),
-          &robot_brain);
+          &Brain);
 
-double stored_time;
-bool stored_time_iswritable;
 vex::timer timer_;
-
-DriveTrain_State currentDriveTrainState = DriveTrain_State::DRIVE;
-System_State currentSystemState = System_State::UNFOLD;
 
 int main()
 {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
-  timer_.reset();
+
+  setDriveState(DRIVE);
+  setSystemState(UNFOLD);
+
+  timer_.clear();
 
   while(true)
   {
+    Brain.Screen.clearScreen();
 
     drive.update(currentDriveTrainState);
     intake.update(currentSystemState);
@@ -78,113 +83,205 @@ int main()
     switch(currentSystemState)
     {
       case UNFOLD:
-        if(timer_.time(seconds) > Ports::UNFOLD_TIME)
+        if(init_system_state)
         {
-          currentSystemState = UNFOLD_ARM_ZERO;
+          lift.stopPID();
+          tray.stopPID();
+          timer_.clear();
+          init_system_state = false;
+        }
+
+        if(timer_.time(sec) > Ports::UNFOLD_TIME)
+        {
+          setSystemState(UNFOLD_ARM_ZERO);
         }
         
         break;
 
       case UNFOLD_ARM_ZERO:
+        if(init_system_state)
+        {
+          lift.stopPID();
+          tray.stopPID();
+          init_system_state = false;
+        }
+
         if(lift.getLimitSwitch())
         {
           lift.zeroEncoder();
-          currentSystemState = TRAY_ZERO;
+          setSystemState(TRAY_ZERO);
         }
         break;
 
       case ARM_ZERO:
+        if(init_system_state)
+        {
+          lift.stopPID();
+          tray.setPIDBounds(-6000, 6000);
+          tray.setTargetPos(Ports::TRAY_BASE_POSITION);
+          init_system_state = false;
+        }
+
         if(lift.getLimitSwitch())
         {
           lift.zeroEncoder();
-          currentSystemState = BASE;
+          setSystemState(BASE);
         }
         break;
 
       case TRAY_ZERO:
+        if(init_system_state)
+        {
+          lift.setPIDBounds(-8000, 8000);
+          lift.setTargetPos(Ports::LIFT_BASE_POSITION);
+          tray.stopPID();
+          init_system_state = false;
+        }
 
         if(tray.getLimitSwitch())
         {
           tray.zeroEncoder();
-          currentSystemState = BASE;
+          setSystemState(BASE);
         }
        break;
 
       case BASE:
+        if(init_system_state)
+        {
+          lift.setPIDBounds(-8000, 8000);
+          lift.setTargetPos(Ports::LIFT_BASE_POSITION);
+          tray.setPIDBounds(-6000, 6000);
+          tray.setTargetPos(Ports::TRAY_BASE_POSITION);
+          init_system_state = false;
+        }
 
         if (JoystickButtonPressed(cont, joystick_config::ARM1_BUTTON))
         {
-            currentSystemState = ARM1;
+          setSystemState(ARM1);
         }
         else if (JoystickButtonPressed(cont, joystick_config::ARM2_BUTTON))
         {
-            currentSystemState = ARM2;
+          setSystemState(ARM2);
         }
         else if (JoystickButtonPressed(cont, joystick_config::VERTICAL_BUTTON))
         {
-            timer_.reset();
-            currentSystemState = TRAY_VERTICAL;
+          setSystemState(POSITION_CUBES);
         }
         else if (JoystickButtonPressed(cont, joystick_config::UNFOLD_BUTTON))
         {
-            timer_.reset();
-            currentSystemState = UNFOLD;
+          setSystemState(UNFOLD);
         }
         
         break;
 
       case ARM1:
+        if(init_system_state)
+        {
+          lift.setPIDBounds(-8000, 8000);
+          lift.setTargetPos(Ports::LIFT_BASE_POSITION1);
+          tray.setPIDBounds(-6000, 6000);
+          tray.setTargetPos(Ports::TRAY_BASE_POSITION);
+          init_system_state = false;
+        }
 
         if (JoystickButtonPressed(cont, joystick_config::ARM2_BUTTON))
         {
-            currentSystemState = ARM2;
+          setSystemState(ARM2);
         }
         else if (JoystickButtonPressed(cont, joystick_config::BASE_BUTTON))
         {
-            currentSystemState = ARM_ZERO;
+          setSystemState(ARM_ZERO);
         }
 
         break;
       
       case ARM2:
+        if(init_system_state)
+        {
+          lift.setPIDBounds(-8000, 8000);
+          lift.setTargetPos(Ports::LIFT_BASE_POSITION2);
+          tray.setPIDBounds(-6000, 6000);
+          tray.setTargetPos(Ports::TRAY_BASE_POSITION);
+          init_system_state = false;
+        }
         
         if (JoystickButtonPressed(cont, joystick_config::ARM1_BUTTON))
         {
-            currentSystemState = ARM1;
+          setSystemState(ARM1);
         }
         else if (JoystickButtonPressed(cont, joystick_config::BASE_BUTTON))
         {
-            currentSystemState = ARM_ZERO;
+          setSystemState(ARM_ZERO);
         }
           
         break;
 
 
       case POSITION_CUBES:
-        if(timer_.time(seconds) > Ports::POSITION_TIME)
+        if(init_system_state)
         {
-          currentSystemState = TRAY_ZERO;
+          lift.setPIDBounds(-8000, 8000);
+          lift.setTargetPos(Ports::LIFT_BASE_POSITION);
+          tray.setPIDBounds(-6000, 6000);
+          tray.setTargetPos(Ports::TRAY_BASE_POSITION);
+          timer_.clear();
+          init_system_state = false;
+        }
+        
+        if(timer_.time(sec) > Ports::POSITION_TIME)
+        {
+          setSystemState(TRAY_ZERO);
         }
         else if(JoystickButtonPressed(cont, joystick_config::BASE_BUTTON))
         {
-          currentSystemState = TRAY_ZERO;
+          setSystemState(TRAY_ZERO);
         }
         else if(tray.getCubeSwitch())
         {
-          currentSystemState = TRAY_VERTICAL;
+          setSystemState(TRAY_VERTICAL);
         }
 
         break;
 
       case TRAY_VERTICAL:
+        if(init_system_state)
+        {
+          lift.setPIDBounds(-8000, 8000);
+          lift.setTargetPos(Ports::LIFT_BASE_POSITION);
+          tray.setPIDBounds(-6000, 6000);
+          tray.setTargetPos(Ports::TRAY_VERTICAL_POSITION);
+          init_system_state = false;
+        }
+
         if(JoystickButtonPressed(cont, joystick_config::BASE_BUTTON))
         {
-          currentSystemState = TRAY_ZERO;
+          setSystemState(TRAY_ZERO);
         }
         break;
-
     }
+
+    Brain.Screen.printAt(10, 20, true, "Tray switch: %d", tray.getLimitSwitch());
+    Brain.Screen.printAt(10, 40, true, "Cube switch: %d", tray.getCubeSwitch());
+    Brain.Screen.printAt(10, 60, true, "Lift switch: %d", lift.getLimitSwitch());
+    Brain.Screen.printAt(10, 80, true, "Tray pos: %d", tray.getTrayRotation());
+    Brain.Screen.printAt(10, 100, true, "Lift pos: %d", lift.getLiftRotation());
+
+    Brain.Screen.render();
+
+    this_thread::sleep_for(10);
   }
+}
+
+void setDriveState(DriveTrain_State new_state)
+{
+  currentDriveTrainState = new_state;
+  init_drive_state = true;
+}
+
+void setSystemState(System_State new_state)
+{
+  currentSystemState = new_state;
+  init_system_state = true;
 }
 
 

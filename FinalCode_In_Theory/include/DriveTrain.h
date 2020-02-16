@@ -3,6 +3,7 @@
 #include "Enums.h"
 #include "joystick_config.h"
 #include "vex.h"
+#include <cmath>
 
 class DriveTrain
 {
