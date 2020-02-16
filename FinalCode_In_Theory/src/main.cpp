@@ -25,6 +25,7 @@ bool init_drive_state;
 bool init_system_state;
 DriveTrain_State currentDriveTrainState;
 System_State currentSystemState;
+vex::competition comp;
 
 vex::controller cont(vex::controllerType::primary);
 vex::triport tri(PORT22);
@@ -52,11 +53,10 @@ Tray tray(Ports::TRAY_PORT_0,
 
 vex::timer timer_;
 
-int main()
-{
-  // Initializing Robot Configuration. DO NOT REMOVE!
-  vexcodeInit();
-
+void autonomous(){
+//do auto here
+}
+void teleop(){
   setDriveState(DRIVE);
   setSystemState(UNFOLD);
 
@@ -270,6 +270,16 @@ int main()
 
     this_thread::sleep_for(10);
   }
+
+}
+int main()
+{
+  // Initializing Robot Configuration. DO NOT REMOVE!
+  vexcodeInit();
+  comp.autonomous(autonomous);
+  comp.drivercontrol(teleop);
+  
+  
 }
 
 void setDriveState(DriveTrain_State new_state)
