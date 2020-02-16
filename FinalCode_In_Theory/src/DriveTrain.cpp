@@ -56,12 +56,11 @@ void DriveTrain::update(DriveTrain_State state)
     RealDrive(JoystickAxis(*controller_ptr, joystick_config::LEFT_AXIS), 
                 JoystickAxis(*controller_ptr, joystick_config::RIGHT_AXIS));
   }
-}
-void DriveTrain::updateSystemState(System_State state){
-  if(state == TRAY_VERTICAL){
+  if(state == DRIVE_BACK_STATE){
     if(JoystickButtonPressed(*controller_ptr, joystick_config::OUTTAKE_BUTTON)){
         RealDrive(-0.2*127, -0.2*127);
     }
   }
 }
+
 

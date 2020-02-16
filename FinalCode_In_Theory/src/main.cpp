@@ -67,7 +67,7 @@ void teleop(){
     Brain.Screen.clearScreen();
 
     drive.update(currentDriveTrainState);
-    drive.updateSystemState(currentSystemState);
+    //drive.updateSystemState(currentSystemState);
     intake.update(currentSystemState);
     lift.update(currentSystemState);
     tray.update(currentSystemState);
@@ -75,10 +75,12 @@ void teleop(){
     switch(currentDriveTrainState)
     {
       case DRIVE:
+
         break;
 
       case OFF:
         break;
+
     }
 
     switch(currentSystemState)
@@ -254,10 +256,12 @@ void teleop(){
           init_system_state = false;
           timer_.reset();
         }
+        setDriveState(DRIVE_BACK_STATE);
 
         if(JoystickButtonPressed(cont, joystick_config::BASE_BUTTON))
         {
           setSystemState(TRAY_ZERO);
+          setDriveState(DRIVE);
         }
         break;
     }
