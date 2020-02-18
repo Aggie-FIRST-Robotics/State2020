@@ -11,6 +11,7 @@
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
+#include "AutoDrive.h"
 #include "DriveTrain.h"
 #include "Enums.h"
 #include "Intake.h"
@@ -54,8 +55,10 @@ Tray tray(Ports::TRAY_PORT_0,
 vex::timer timer_;
 
 void autonomous(){
-//do auto here
+  AutoDriveConfig first(100, 100, 100);
+  drive.getAutoDrive().initDrive(AutoDriveConfig &config, AutoDriveConfig &next_config, double transition_dist, double thresh)
 }
+
 void teleop(){
   setDriveState(DRIVE);
   setSystemState(UNFOLD);
@@ -75,7 +78,9 @@ void teleop(){
     switch(currentDriveTrainState)
     {
       case DRIVE:
+        break;
 
+      case DRIVE_BACK_STATE:
         break;
 
       case OFF:
@@ -254,7 +259,7 @@ void teleop(){
           tray.setPIDBounds(-6000, 6000);
           tray.setTargetPos(Ports::TRAY_VERTICAL_POSITION);
           init_system_state = false;
-          timer_.reset();
+          timer_.clear();
         }
         setDriveState(DRIVE_BACK_STATE);
 

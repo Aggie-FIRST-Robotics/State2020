@@ -38,29 +38,29 @@ public:
     T pid_val = p_val;
     double curr_time = time.time()/1000.0;
 
-    // if(initialized)
-    // {
-    //   double dt = curr_time - t_sample;
+    if(initialized)
+    {
+      double dt = curr_time - t_sample;
 
-    //   i_val += (T)(i_term * error * dt);
-    //   if(i_val > i_max)
-    //   {
-    //     i_val = i_max;
-    //   }
-    //   else if(i_val < i_min)
-    //   {
-    //     i_val = i_min;
-    //   }
-    //   pid_val += i_val;
+      i_val += (T)(i_term * error * dt);
+      if(i_val > i_max)
+      {
+        i_val = i_max;
+      }
+      else if(i_val < i_min)
+      {
+        i_val = i_min;
+      }
+      pid_val += i_val;
 
-    //   T d_val = 0;
-    //   d_val = (T) (d_term * (sensed_val - last_sensed) / dt);
-    //   pid_val -= d_val;
-    // }
-    // else
-    // {
-    //   initialized = true;
-    // }
+      T d_val = 0;
+      d_val = (T) (d_term * (sensed_val - last_sensed) / dt);
+      pid_val -= d_val;
+    }
+    else
+    {
+      initialized = true;
+    }
 
     t_sample = curr_time;
     last_sensed = sensed_val;
