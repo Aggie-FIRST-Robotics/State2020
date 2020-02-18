@@ -230,8 +230,7 @@ void teleop(){
           timer_.clear();
           init_system_state = false;
         }
-        setSystemState(TRAY_VERTICAL);
-        /*
+        
         if(timer_.time(sec) > Ports::POSITION_TIME)
         {
           setSystemState(TRAY_ZERO);
@@ -242,8 +241,8 @@ void teleop(){
         }
         else if(tray.getCubeSwitch())
         {
-          
-        }*/
+          setSystemState(TRAY_VERTICAL);
+        }
 
         break;
 
@@ -252,7 +251,7 @@ void teleop(){
         {
           lift.setPIDBounds(-8000, 8000);
           lift.setTargetPos(Ports::LIFT_BASE_POSITION);
-          tray.setPIDBounds(-9000, 9000);
+          tray.setPIDBounds(-6000, 6000);
           tray.setTargetPos(Ports::TRAY_VERTICAL_POSITION);
           init_system_state = false;
           timer_.reset();
@@ -267,8 +266,8 @@ void teleop(){
         break;
     }
 
-    Brain.Screen.printAt(10, 20, true, "Drive Left: %d", drive.getLeftSide());
-    Brain.Screen.printAt(10, 40, true, "Drive Right: %d", drive.getRightSide());
+    Brain.Screen.printAt(10, 20, true, "Tray switch: %d", tray.getLimitSwitch());
+    Brain.Screen.printAt(10, 40, true, "Cube switch: %d", tray.getCubeSwitch());
     Brain.Screen.printAt(10, 60, true, "Lift switch: %d", lift.getLimitSwitch());
     Brain.Screen.printAt(10, 80, true, "Tray pos: %d", tray.getTrayRotation());
     Brain.Screen.printAt(10, 100, true, "Lift pos: %d", lift.getLiftRotation());

@@ -21,8 +21,6 @@ class DriveTrain
 
   void update(DriveTrain_State state);
   void updateSystemState(System_State state);
-  int32_t getLeftSide();
-  int32_t getRightSide();
 
 private:
   V5_DeviceT topleftMotor;
@@ -30,8 +28,4 @@ private:
   V5_DeviceT bottomleftMotor;
   V5_DeviceT bottomrightMotor;
   vex::controller *controller_ptr;
-  double topleftmotor_base;
-  double toprightmotor_base;
-  
-
 };
