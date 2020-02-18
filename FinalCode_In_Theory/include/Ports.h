@@ -25,7 +25,7 @@ namespace Ports
 
   static constexpr double POSITION_CUBE_TIMEOUT = 2.0;
   static constexpr int32_t TRAY_BASE_POSITION = 0;
-  static constexpr int32_t TRAY_VERTICAL_POSITION = 2100;
+  static constexpr int32_t TRAY_VERTICAL_POSITION = 2700;
 
   static constexpr int32_t LIFT_BASE_POSITION = 0;
   static constexpr int32_t  LIFT_BASE_POSITION1 = 400;

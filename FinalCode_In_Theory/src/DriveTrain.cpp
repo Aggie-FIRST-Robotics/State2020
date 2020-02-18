@@ -66,5 +66,15 @@ void DriveTrain::update(DriveTrain_State state)
     }
   }
 }
+int32_t DriveTrain::getLeftSide(){
+
+  uint32_t  time;
+  return vexDeviceMotorPositionRawGet(topleftMotor, &time) - topleftmotor_base;
+}
+int32_t DriveTrain::getRightSide(){
+   uint32_t  time;
+  return vexDeviceMotorPositionRawGet(toprightMotor, &time) - toprightmotor_base;
+  
+}
 
 
