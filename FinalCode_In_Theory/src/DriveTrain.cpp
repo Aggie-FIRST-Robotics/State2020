@@ -105,4 +105,14 @@ AutoDrive &DriveTrain::getAutoDrive()
   return auto_drive;
 }
 
+int32_t DriveTrain::getLeftEncoder()
+{
+  uint32_t time;
+  return -vexDeviceMotorPositionRawGet(topleftMotor, &time);
+}
 
+int32_t DriveTrain::getRightEncoder()
+{
+  uint32_t time;
+  return vexDeviceMotorPositionRawGet(toprightMotor, &time);
+}

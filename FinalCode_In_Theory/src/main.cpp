@@ -54,9 +54,65 @@ Tray tray(Ports::TRAY_PORT_0,
 
 vex::timer timer_;
 
+  const AutoDriveConfig stop(1, 1, 0);
+  const AutoDriveConfig s1(48*DriveTrain::TICKS_PER_IN, 48*DriveTrain::TICKS_PER_IN, 30*DriveTrain::TICKS_PER_IN);
+  const AutoDriveConfig s2(6*DriveTrain::TICKS_PER_IN, 6*DriveTrain::TICKS_PER_IN, 20*DriveTrain::TICKS_PER_IN);
+  const AutoDriveConfig s3(11.5*DriveTrain::TICKS_PER_IN, -11.5*DriveTrain::TICKS_PER_IN, 30*DriveTrain::TICKS_PER_IN);
+  const AutoDriveConfig s4(24*DriveTrain::TICKS_PER_IN, 24*DriveTrain::TICKS_PER_IN, 30*DriveTrain::TICKS_PER_IN);
+  const AutoDriveConfig s5(-24*DriveTrain::TICKS_PER_IN, -24*DriveTrain::TICKS_PER_IN, 30*DriveTrain::TICKS_PER_IN);
+  const AutoDriveConfig s6(-11.5*DriveTrain::TICKS_PER_IN, 11.5*DriveTrain::TICKS_PER_IN, 30*DriveTrain::TICKS_PER_IN);
+
 void autonomous(){
-  AutoDriveConfig first(100, 100, 100);
-  drive.getAutoDrive().initDrive(AutoDriveConfig &config, AutoDriveConfig &next_config, double transition_dist, double thresh)
+
+  drive.getAutoDrive().initDrive(&s1, &stop, 2*DriveTrain::TICKS_PER_IN, 1*DriveTrain::TICKS_PER_IN);
+  while(!drive.getAutoDrive().complete())
+  {
+    drive.getAutoDrive().update(drive.getLeftEncoder(), drive.getRightEncoder());
+    drive.setPower(drive.getAutoDrive().leftPower(), drive.getAutoDrive().rightPower());
+    this_thread::sleep_for(10);
+  }
+
+  drive.getAutoDrive().initDrive(&s2, &stop, 2*DriveTrain::TICKS_PER_IN, 1*DriveTrain::TICKS_PER_IN);
+  while(!drive.getAutoDrive().complete())
+  {
+    drive.getAutoDrive().update(drive.getLeftEncoder(), drive.getRightEncoder());
+    drive.setPower(drive.getAutoDrive().leftPower(), drive.getAutoDrive().rightPower());
+    this_thread::sleep_for(10);
+  }
+
+  drive.getAutoDrive().initDrive(&s3, &stop, 1*DriveTrain::TICKS_PER_IN, 1*DriveTrain::TICKS_PER_IN);
+  while(!drive.getAutoDrive().complete())
+  {
+    drive.getAutoDrive().update(drive.getLeftEncoder(), drive.getRightEncoder());
+    drive.setPower(drive.getAutoDrive().leftPower(), drive.getAutoDrive().rightPower());
+    this_thread::sleep_for(10);
+  }
+
+  drive.getAutoDrive().initDrive(&s4, &stop, 2*DriveTrain::TICKS_PER_IN, 1*DriveTrain::TICKS_PER_IN);
+  while(!drive.getAutoDrive().complete())
+  {
+    drive.getAutoDrive().update(drive.getLeftEncoder(), drive.getRightEncoder());
+    drive.setPower(drive.getAutoDrive().leftPower(), drive.getAutoDrive().rightPower());
+    this_thread::sleep_for(10);
+  }
+
+  drive.getAutoDrive().initDrive(&s5, &stop, 2*DriveTrain::TICKS_PER_IN, 1*DriveTrain::TICKS_PER_IN);
+  while(!drive.getAutoDrive().complete())
+  {
+    drive.getAutoDrive().update(drive.getLeftEncoder(), drive.getRightEncoder());
+    drive.setPower(drive.getAutoDrive().leftPower(), drive.getAutoDrive().rightPower());
+    this_thread::sleep_for(10);
+  }
+
+  drive.getAutoDrive().initDrive(&s6, &stop, 1*DriveTrain::TICKS_PER_IN, 1*DriveTrain::TICKS_PER_IN);
+  while(!drive.getAutoDrive().complete())
+  {
+    drive.getAutoDrive().update(drive.getLeftEncoder(), drive.getRightEncoder());
+    drive.setPower(drive.getAutoDrive().leftPower(), drive.getAutoDrive().rightPower());
+    this_thread::sleep_for(10);
+  }
+
+  drive.setPower(0, 0);
 }
 
 void teleop(){

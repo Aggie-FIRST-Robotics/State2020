@@ -42,8 +42,8 @@ public:
             double pos_i,
             double pos_d);
 
-  void initDrive(AutoDriveConfig &config, 
-                 AutoDriveConfig &next_config, 
+  void initDrive(const AutoDriveConfig *config, 
+                 const AutoDriveConfig *next_config, 
                  double transition_dist,
                  double thresh);
 
@@ -75,8 +75,8 @@ private:
   bool is_done;
   double transition;
   double end_thresh;
-  AutoDriveConfig curr;
-  AutoDriveConfig next;
+  const AutoDriveConfig *curr;
+  const AutoDriveConfig *next;
   vex::timer time;
   double last_time;
 
