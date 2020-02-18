@@ -60,10 +60,6 @@ void DriveTrain::update(DriveTrain_State state)
     if(JoystickButtonPressed(*controller_ptr, joystick_config::OUTTAKE_BUTTON)){
         RealDrive(-0.2*127, -0.2*127);
     }
-    else{
-      RealDrive(JoystickAxis(*controller_ptr, joystick_config::LEFT_AXIS), 
-                JoystickAxis(*controller_ptr, joystick_config::RIGHT_AXIS));
-    }
   }
 }
 int32_t DriveTrain::getLeftSide(){
