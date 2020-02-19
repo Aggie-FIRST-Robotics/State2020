@@ -128,7 +128,6 @@ void teleop(){
     Brain.Screen.clearScreen();
 
     drive.update(currentDriveTrainState);
-    //drive.updateSystemState(currentSystemState);
     intake.update(currentSystemState);
     lift.update(currentSystemState);
     tray.update(currentSystemState);
@@ -156,6 +155,7 @@ void teleop(){
           timer_.clear();
           init_system_state = false;
         }
+          setSystemState(UNFOLD_ARM_ZERO);
 
         if(timer_.time(sec) > Ports::UNFOLD_TIME)
         {
@@ -171,7 +171,7 @@ void teleop(){
           tray.stopPID();
           init_system_state = false;
         }
-
+        setSystemState(ARM_ZERO);
         if(lift.getLimitSwitch())
         {
           lift.zeroEncoder();
@@ -187,6 +187,8 @@ void teleop(){
           tray.setTargetPos(Ports::TRAY_BASE_POSITION);
           init_system_state = false;
         }
+        setSystemState(BASE);
+
 
         if(lift.getLimitSwitch())
         {
@@ -203,7 +205,7 @@ void teleop(){
           tray.stopPID();
           init_system_state = false;
         }
-
+        setSystemState(BASE);
         if(tray.getLimitSwitch())
         {
           tray.zeroEncoder();

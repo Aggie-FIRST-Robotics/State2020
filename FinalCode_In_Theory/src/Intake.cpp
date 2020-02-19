@@ -7,6 +7,8 @@ Intake::Intake(int intakeport,
                vex::controller *controller_p) : 
   intake(vexDeviceGetByIndex(intakeport - 1)), 
   intake1(vexDeviceGetByIndex(intake1port - 1)),
+  intake2(vexDeviceGetByIndex(intake2port - 1)),
+  intake3(vexDeviceGetByIndex(intake3port - 1)),
   controller_ptr(controller_p)
 {
 }
@@ -31,7 +33,7 @@ void Intake::joystickIntake(int32_t power)
     moveConst(-power);
   }
   else
-  {
+  {  
     moveConst(0);
   }
 }
