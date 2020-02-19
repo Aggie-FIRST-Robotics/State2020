@@ -18,8 +18,8 @@ namespace Ports
   static constexpr int TRAY_CUBE_SWITCH = 0;
   static constexpr int TRAY_ZERO_SWITCH = 1;
 
-  static constexpr int LIFT_PORT_0 = 6;
-  static constexpr int LIFT_PORT_1 = 7;
+  static constexpr int LIFT_PORT_0 = 19;
+  static constexpr int LIFT_PORT_1 = 20;
   static constexpr int LIFT_ZERO_SWITCH = 2;
 
   static constexpr double UNFOLD_TIME = 2;
