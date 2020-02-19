@@ -39,6 +39,8 @@ DriveTrain drive(Ports::DRIVE_TRAIN_TOP_LEFT_PORT,
 
 Intake intake(Ports::INTAKE_PORT_0, 
               Ports::INTAKE_PORT_1,
+              Ports::INTAKE_PORT_2,
+              Ports::INTAKE_PORT_3,
               &cont);
 
 Lift lift(Ports::LIFT_PORT_0, 

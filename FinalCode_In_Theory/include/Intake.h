@@ -11,6 +11,8 @@ class Intake
 public:
   Intake(int intakeport, 
          int intake1port, 
+         int intake2port,
+         int intake3port,
          vex::controller *controller_p);
 
   void moveConst(int32_t speed);
@@ -22,5 +24,7 @@ public:
 private:
   V5_DeviceT intake;
   V5_DeviceT intake1;
+  V5_DeviceT intake2;
+  V5_DeviceT intake3;
   vex::controller *controller_ptr;
 };

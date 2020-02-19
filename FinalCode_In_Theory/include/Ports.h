@@ -10,6 +10,8 @@ namespace Ports
 
   static constexpr int INTAKE_PORT_0 = 5;
   static constexpr int INTAKE_PORT_1 = 11;
+  static constexpr int INTAKE_PORT_2 = 3;
+  static constexpr int INTAKE_PORT_3 = 4;
 
   static constexpr int TRAY_PORT_0 = 17;
   static constexpr int TRAY_PORT_1 = 16;

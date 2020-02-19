@@ -2,6 +2,8 @@
 
 Intake::Intake(int intakeport, 
                int intake1port, 
+               int intake2port,
+               int intake3port,
                vex::controller *controller_p) : 
   intake(vexDeviceGetByIndex(intakeport - 1)), 
   intake1(vexDeviceGetByIndex(intake1port - 1)),
@@ -13,6 +15,9 @@ void Intake::moveConst(int32_t speed)
 {
   vexDeviceMotorVoltageSet(intake, -speed);
   vexDeviceMotorVoltageSet(intake1, speed);
+  vexDeviceMotorVoltageSet(intake2, -speed);
+  vexDeviceMotorVoltageSet(intake3, speed);
+
 }
 
 void Intake::joystickIntake(int32_t power)
