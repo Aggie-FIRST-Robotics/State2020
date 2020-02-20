@@ -99,3 +99,16 @@ void Tray::stopPID()
 {
   tray_pid.stop();
 }
+
+void Tray::updateAuto(Auto_State state)
+{
+  if(state == TRAY_VERTICAL_AUTO ||
+     state == OUTTAKE)
+  {
+    movePID();
+  }
+  else
+  {
+    moveConst(0);
+  }
+}

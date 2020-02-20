@@ -52,3 +52,27 @@ void Intake::update(System_State state)
     joystickIntake(6000);
   }
 }
+
+void Intake::updateAuto(Auto_State state)
+{
+  if(state == FORWARD ||
+     state == MORE_FORWARD ||
+     state == TURN_ONE ||
+     state == LEFT ||
+     state == RIGHT)
+  {
+    moveConst(12000);
+  }
+  else if(state == POSITION_CUBES_AUTO)
+  {
+    moveConst(-9000);
+  }
+  else if(state == OUTTAKE)
+  {
+    moveConst(-6000);
+  }
+  else
+  {
+    moveConst(0);
+  }
+}

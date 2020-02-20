@@ -24,6 +24,7 @@ class DriveTrain
 
   void update(DriveTrain_State state);
   void updateSystemState(System_State state);
+  void updateAuto(Auto_State state);
 
   int32_t getLeftEncoder();
 
@@ -45,7 +46,7 @@ private:
   static constexpr double POS_I = 0;
   static constexpr double POS_D = 0;
 
-  static constexpr double VEL_P = 4;
+  static constexpr double VEL_P = 5;
   static constexpr double VEL_I = 0.4;
   static constexpr double VEL_D = 0;
 };

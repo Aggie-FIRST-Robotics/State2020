@@ -100,6 +100,32 @@ void DriveTrain::update(DriveTrain_State state)
   }
 }
 
+void DriveTrain::updateAuto(Auto_State state)
+{
+  if(state == FORWARD ||
+      state == MORE_FORWARD ||
+      state == TURN_ONE ||
+      state == LEFT ||
+      state == RIGHT ||
+      state == TURN_TWO ||
+      state == BACK ||
+      state == CLEAR ||
+      state == TURN_THREE ||
+      state == TO_STACK)
+  {
+    auto_drive.update(getLeftEncoder(), getRightEncoder());
+    setPower(auto_drive.leftPower(), auto_drive.rightPower());
+  }
+  else if(state == OUTTAKE)
+  {
+    setPower(-4000, -4000);
+  }
+  else
+  {
+    setPower(0, 0);
+  }
+}
+
 AutoDrive &DriveTrain::getAutoDrive()
 {
   return auto_drive;

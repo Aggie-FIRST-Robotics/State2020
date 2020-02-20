@@ -21,9 +21,12 @@
 
 void setDriveState(DriveTrain_State new_state);
 void setSystemState(System_State new_state);
+void setAutoState(Auto_State new_state);
 
 bool init_drive_state;
 bool init_system_state;
+bool init_auto_state;
+Auto_State currentAutoState;
 DriveTrain_State currentDriveTrainState;
 System_State currentSystemState;
 vex::competition comp;
@@ -55,64 +58,260 @@ Tray tray(Ports::TRAY_PORT_0,
 vex::timer timer_;
 
   const AutoDriveConfig stop(1, 1, 0);
-  const AutoDriveConfig s1(48*DriveTrain::TICKS_PER_IN, 48*DriveTrain::TICKS_PER_IN, 30*DriveTrain::TICKS_PER_IN);
+  const AutoDriveConfig s1(36*DriveTrain::TICKS_PER_IN, 36*DriveTrain::TICKS_PER_IN, 30*DriveTrain::TICKS_PER_IN);
   const AutoDriveConfig s2(6*DriveTrain::TICKS_PER_IN, 6*DriveTrain::TICKS_PER_IN, 20*DriveTrain::TICKS_PER_IN);
   const AutoDriveConfig s3(11.5*DriveTrain::TICKS_PER_IN, -11.5*DriveTrain::TICKS_PER_IN, 30*DriveTrain::TICKS_PER_IN);
   const AutoDriveConfig s4(24*DriveTrain::TICKS_PER_IN, 24*DriveTrain::TICKS_PER_IN, 30*DriveTrain::TICKS_PER_IN);
   const AutoDriveConfig s5(-24*DriveTrain::TICKS_PER_IN, -24*DriveTrain::TICKS_PER_IN, 30*DriveTrain::TICKS_PER_IN);
   const AutoDriveConfig s6(-11.5*DriveTrain::TICKS_PER_IN, 11.5*DriveTrain::TICKS_PER_IN, 30*DriveTrain::TICKS_PER_IN);
+  const AutoDriveConfig s7(-42*DriveTrain::TICKS_PER_IN, -42*DriveTrain::TICKS_PER_IN, 30*DriveTrain::TICKS_PER_IN);
+  const AutoDriveConfig s8(4*DriveTrain::TICKS_PER_IN, 4*DriveTrain::TICKS_PER_IN, 20*DriveTrain::TICKS_PER_IN);
+  const AutoDriveConfig s9(-11.5*DriveTrain::TICKS_PER_IN, 11.5*DriveTrain::TICKS_PER_IN, 30*DriveTrain::TICKS_PER_IN);
+  const AutoDriveConfig s10(36*DriveTrain::TICKS_PER_IN, 36*DriveTrain::TICKS_PER_IN, 30*DriveTrain::TICKS_PER_IN);
 
 void autonomous(){
+  setAutoState(FORWARD);
+  
+  while(true)
+  { 
 
-  drive.getAutoDrive().initDrive(&s1, &stop, 2*DriveTrain::TICKS_PER_IN, 1*DriveTrain::TICKS_PER_IN);
-  while(!drive.getAutoDrive().complete())
-  {
-    drive.getAutoDrive().update(drive.getLeftEncoder(), drive.getRightEncoder());
-    drive.setPower(drive.getAutoDrive().leftPower(), drive.getAutoDrive().rightPower());
+    switch(currentAutoState)
+    {
+      case(FORWARD):
+        if(init_auto_state)
+        {
+          drive.getAutoDrive().initDrive(&s1, 
+                                         &stop, 
+                                         2*DriveTrain::TICKS_PER_IN, 
+                                         1*DriveTrain::TICKS_PER_IN);
+          init_auto_state = false;
+        }
+
+        if(drive.getAutoDrive().complete())
+        {
+          setAutoState(MORE_FORWARD);
+        }
+
+        break;
+
+      case(MORE_FORWARD):
+        if(init_auto_state)
+        {
+          drive.getAutoDrive().initDrive(&s2, 
+                                         &stop, 
+                                         2*DriveTrain::TICKS_PER_IN, 
+                                         1*DriveTrain::TICKS_PER_IN);
+          init_auto_state = false;
+        }
+        
+        if(drive.getAutoDrive().complete())
+        {
+          setAutoState(TURN_ONE);
+        }
+
+        break;
+
+      case(TURN_ONE):
+        if(init_auto_state)
+        {
+          drive.getAutoDrive().initDrive(&s3, 
+                                         &stop, 
+                                         1*DriveTrain::TICKS_PER_IN, 
+                                         1*DriveTrain::TICKS_PER_IN);          
+          init_auto_state = false;
+        }
+        
+        if(drive.getAutoDrive().complete())
+        {
+          setAutoState(LEFT);
+        }
+
+        break;
+
+      case(LEFT):
+        if(init_auto_state)
+        {
+          drive.getAutoDrive().initDrive(&s4, 
+                                         &stop, 
+                                         2*DriveTrain::TICKS_PER_IN, 
+                                         1*DriveTrain::TICKS_PER_IN);          
+          init_auto_state = false;
+        }
+        
+        if(drive.getAutoDrive().complete())
+        {
+          setAutoState(RIGHT);
+        }
+
+        break;
+
+      case(RIGHT):
+        if(init_auto_state)
+        {
+          drive.getAutoDrive().initDrive(&s5, 
+                                         &stop, 
+                                         2*DriveTrain::TICKS_PER_IN, 
+                                         1*DriveTrain::TICKS_PER_IN);          
+          init_auto_state = false;
+        }
+     
+        if(drive.getAutoDrive().complete())
+        {
+          setAutoState(TURN_TWO);
+        }
+
+        break;
+
+      case(TURN_TWO):
+        if(init_auto_state)
+        {
+          drive.getAutoDrive().initDrive(&s6, 
+                                         &stop, 
+                                         1*DriveTrain::TICKS_PER_IN, 
+                                         1*DriveTrain::TICKS_PER_IN);          
+          init_auto_state = false;
+        }
+             
+        if(drive.getAutoDrive().complete())
+        {
+          setAutoState(BACK);
+        }
+
+        break;
+
+      case(BACK):
+        if(init_auto_state)
+        {
+          drive.getAutoDrive().initDrive(&s7, 
+                                         &stop, 
+                                         2*DriveTrain::TICKS_PER_IN, 
+                                         1*DriveTrain::TICKS_PER_IN);          
+          init_auto_state = false;
+        }
+             
+        if(drive.getAutoDrive().complete())
+        {
+          setAutoState(CLEAR);
+        }
+
+        break;
+
+      case(CLEAR):
+        if(init_auto_state)
+        {
+          drive.getAutoDrive().initDrive(&s8, 
+                                         &stop, 
+                                         1*DriveTrain::TICKS_PER_IN, 
+                                         1*DriveTrain::TICKS_PER_IN);          
+          init_auto_state = false;
+        }
+
+        if(drive.getAutoDrive().complete())
+        {
+          setAutoState(TURN_THREE);
+        }
+
+        break;
+
+      case(TURN_THREE):
+        if(init_auto_state)
+        {
+          drive.getAutoDrive().initDrive(&s9, 
+                                         &stop, 
+                                         1*DriveTrain::TICKS_PER_IN, 
+                                         1*DriveTrain::TICKS_PER_IN);          
+          init_auto_state = false;
+        }
+
+        if(drive.getAutoDrive().complete())
+        {
+          setAutoState(TO_STACK);
+        }
+
+        break;
+
+      case(TO_STACK):
+        if(init_auto_state)
+        {
+          drive.getAutoDrive().initDrive(&s10, 
+                                         &stop, 
+                                         2*DriveTrain::TICKS_PER_IN, 
+                                         1*DriveTrain::TICKS_PER_IN);          
+          init_auto_state = false;
+        }
+
+        if(drive.getAutoDrive().complete())
+        {
+          setAutoState(POSITION_CUBES_AUTO);
+        }
+
+        break;
+
+      case(POSITION_CUBES_AUTO):
+        if(init_auto_state)
+        {
+
+          init_auto_state = false;
+        }
+
+        if(tray.getCubeSwitch())
+        {
+          setAutoState(TRAY_VERTICAL_AUTO);
+        }
+
+        break;
+
+      case(TRAY_VERTICAL_AUTO):
+        if(init_auto_state)
+        {
+          tray.zeroEncoder();
+          tray.setPIDBounds(-6000, 6000);
+          tray.setTargetPos(Ports::TRAY_VERTICAL_POSITION);
+          timer_.clear();
+          init_auto_state = false;
+        }
+
+        if(timer_.time() > 5000)
+        {
+          setAutoState(OUTTAKE);
+        }
+
+        break;
+
+      case(OUTTAKE):
+        if(init_auto_state)
+        {
+          tray.setPIDBounds(-6000, 6000);
+          tray.setTargetPos(Ports::TRAY_VERTICAL_POSITION);
+          timer_.clear();
+          init_auto_state = false;
+        }
+
+        if(timer_.time() > 5000)
+        {
+          setAutoState(STOP_AUTO);
+        }
+
+        break;
+
+      case(STOP_AUTO):
+        if(init_auto_state)
+        {
+          tray.setPIDBounds(-6000, 6000);
+          tray.setTargetPos(Ports::TRAY_BASE_POSITION);
+          timer_.clear();
+          init_auto_state = false;
+        }
+
+        break;
+    }
+
+    drive.updateAuto(currentAutoState);
+    intake.updateAuto(currentAutoState);
+    tray.updateAuto(currentAutoState);
+
     this_thread::sleep_for(10);
   }
-
-  drive.getAutoDrive().initDrive(&s2, &stop, 2*DriveTrain::TICKS_PER_IN, 1*DriveTrain::TICKS_PER_IN);
-  while(!drive.getAutoDrive().complete())
-  {
-    drive.getAutoDrive().update(drive.getLeftEncoder(), drive.getRightEncoder());
-    drive.setPower(drive.getAutoDrive().leftPower(), drive.getAutoDrive().rightPower());
-    this_thread::sleep_for(10);
-  }
-
-  drive.getAutoDrive().initDrive(&s3, &stop, 1*DriveTrain::TICKS_PER_IN, 1*DriveTrain::TICKS_PER_IN);
-  while(!drive.getAutoDrive().complete())
-  {
-    drive.getAutoDrive().update(drive.getLeftEncoder(), drive.getRightEncoder());
-    drive.setPower(drive.getAutoDrive().leftPower(), drive.getAutoDrive().rightPower());
-    this_thread::sleep_for(10);
-  }
-
-  drive.getAutoDrive().initDrive(&s4, &stop, 2*DriveTrain::TICKS_PER_IN, 1*DriveTrain::TICKS_PER_IN);
-  while(!drive.getAutoDrive().complete())
-  {
-    drive.getAutoDrive().update(drive.getLeftEncoder(), drive.getRightEncoder());
-    drive.setPower(drive.getAutoDrive().leftPower(), drive.getAutoDrive().rightPower());
-    this_thread::sleep_for(10);
-  }
-
-  drive.getAutoDrive().initDrive(&s5, &stop, 2*DriveTrain::TICKS_PER_IN, 1*DriveTrain::TICKS_PER_IN);
-  while(!drive.getAutoDrive().complete())
-  {
-    drive.getAutoDrive().update(drive.getLeftEncoder(), drive.getRightEncoder());
-    drive.setPower(drive.getAutoDrive().leftPower(), drive.getAutoDrive().rightPower());
-    this_thread::sleep_for(10);
-  }
-
-  drive.getAutoDrive().initDrive(&s6, &stop, 1*DriveTrain::TICKS_PER_IN, 1*DriveTrain::TICKS_PER_IN);
-  while(!drive.getAutoDrive().complete())
-  {
-    drive.getAutoDrive().update(drive.getLeftEncoder(), drive.getRightEncoder());
-    drive.setPower(drive.getAutoDrive().leftPower(), drive.getAutoDrive().rightPower());
-    this_thread::sleep_for(10);
-  }
-
-  drive.setPower(0, 0);
 }
 
 void teleop(){
@@ -361,4 +560,8 @@ void setSystemState(System_State new_state)
   init_system_state = true;
 }
 
-
+void setAutoState(Auto_State new_state)
+{
+  currentAutoState = new_state;
+  init_auto_state = true;
+}
