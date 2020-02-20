@@ -9,6 +9,8 @@
 class Intake
 {
 public:
+  bool toggle_on;
+
   Intake(int intakeport, 
          int intake1port, 
          vex::controller *controller_p);
@@ -21,6 +23,7 @@ public:
   void updateAuto(Auto_State state);
 
 private:
+  bool toggle_pressed;
   V5_DeviceT intake;
   V5_DeviceT intake1;
   vex::controller *controller_ptr;

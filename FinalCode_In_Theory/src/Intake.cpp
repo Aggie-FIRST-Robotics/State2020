@@ -3,7 +3,7 @@
 Intake::Intake(int intakeport, 
                int intake1port, 
                vex::controller *controller_p) : 
-  intake(vexDeviceGetByIndex(intakeport - 1)), 
+  toggle_on(true), intake(vexDeviceGetByIndex(intakeport - 1)), 
   intake1(vexDeviceGetByIndex(intake1port - 1)),
   controller_ptr(controller_p)
 {
@@ -25,10 +25,15 @@ void Intake::joystickIntake(int32_t power)
   {
     moveConst(-power);
   }
-  else
+  else if(toggle_on)
   {
+    moveConst(6000);
+  }
+  else{
     moveConst(0);
   }
+
+  
 }
 
 void Intake::update(System_State state)
@@ -37,7 +42,8 @@ void Intake::update(System_State state)
   {
     moveConst(-12000);
   }
-  else if (state == BASE || 
+  else if (state == BASE_ARM || 
+            state == BASE_TRAY || 
             state == ARM1 || 
             state == ARM2)
   {
@@ -47,9 +53,20 @@ void Intake::update(System_State state)
   {
     moveConst(-6000);
   }
+  else if (state == BASE_ARM || state == BASE_TRAY) {
+  
+  }
   else if(state == TRAY_VERTICAL)
   {
     joystickIntake(6000);
+  }
+
+  if(!JoystickButtonPressed(*controller_ptr, joystick_config::TOGGLE_BUTTON)){
+    toggle_pressed = false;
+  }
+  if(!toggle_pressed && JoystickButtonPressed(*controller_ptr, joystick_config::TOGGLE_BUTTON)){
+    toggle_pressed = true;
+    toggle_on = !toggle_on;
   }
 }
 

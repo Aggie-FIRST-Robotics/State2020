@@ -104,6 +104,9 @@ public:
     initialized = false;
     time.clear();
   }
+  T getTarget(){
+    return target;
+  }
 
 private:
   T p_term;

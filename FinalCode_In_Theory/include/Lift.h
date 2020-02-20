@@ -34,6 +34,8 @@ public:
 
   void stopPID();
 
+  int32_t getSetPosition();
+
 private:
   V5_DeviceT liftmotor;
   V5_DeviceT liftmotor1;

@@ -9,7 +9,10 @@
 class DriveTrain
 {
   public:
-
+  V5_DeviceT topleftMotor;
+  V5_DeviceT toprightMotor;
+  V5_DeviceT bottomleftMotor;
+  V5_DeviceT bottomrightMotor;
   static constexpr double TICKS_PER_IN = 63.88;
 
   DriveTrain(int topleftMotorport, 
@@ -35,10 +38,7 @@ class DriveTrain
   void setPower(int32_t left, int32_t right);
 
 private:
-  V5_DeviceT topleftMotor;
-  V5_DeviceT toprightMotor;
-  V5_DeviceT bottomleftMotor;
-  V5_DeviceT bottomrightMotor;
+ 
   vex::controller *controller_ptr;
   AutoDrive auto_drive;
 

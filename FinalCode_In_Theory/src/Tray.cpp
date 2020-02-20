@@ -47,7 +47,8 @@ void Tray::update(System_State state)
   {
     moveConst(-6000);
   }
-  else if (state == BASE || 
+  else if (state == BASE_ARM || 
+          state == BASE_TRAY ||
           state == ARM1 || 
           state == ARM2 || 
           state == POSITION_CUBES ||
@@ -98,6 +99,10 @@ void Tray::setTargetPos(int32_t target)
 void Tray::stopPID()
 {
   tray_pid.stop();
+}
+
+int32_t Tray::getSetPosition(){
+  return tray_pid.getTarget();
 }
 
 void Tray::updateAuto(Auto_State state)

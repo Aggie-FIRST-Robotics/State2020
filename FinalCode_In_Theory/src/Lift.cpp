@@ -46,7 +46,8 @@ void Lift::update(System_State state)
     moveConst(-6000);
   }
   else if (state == TRAY_ZERO || 
-           state == BASE || 
+           state == BASE_ARM ||
+           state == BASE_TRAY ||  
            state == POSITION_CUBES || 
            state == TRAY_VERTICAL ||
            state == ARM1 ||
@@ -92,3 +93,7 @@ void Lift::stopPID()
 {
   lift_pid.stop();
 }
+ int32_t Lift::getSetPosition()
+ {
+   return lift_pid.getTarget();
+ }

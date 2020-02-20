@@ -19,6 +19,8 @@
 #include "Lift.h"
 #include "Ports.h"
 
+
+
 void setDriveState(DriveTrain_State new_state);
 void setSystemState(System_State new_state);
 void setAutoState(Auto_State new_state);
@@ -26,6 +28,9 @@ void setAutoState(Auto_State new_state);
 bool init_drive_state;
 bool init_system_state;
 bool init_auto_state;
+bool startuptoggle = true;
+int32_t trayjoystickposition;
+int32_t liftjoystickposition;
 Auto_State currentAutoState;
 DriveTrain_State currentDriveTrainState;
 System_State currentSystemState;
@@ -388,7 +393,7 @@ void teleop(){
         if(lift.getLimitSwitch())
         {
           lift.zeroEncoder();
-          setSystemState(BASE);
+          setSystemState(BASE_TRAY);
         }
         break;
 
@@ -404,13 +409,14 @@ void teleop(){
         if(tray.getLimitSwitch())
         {
           tray.zeroEncoder();
-          setSystemState(BASE);
+          setSystemState(BASE_TRAY);
         }
        break;
 
-      case BASE:
+      case BASE_TRAY:
         if(init_system_state)
         {
+          trayjoystickposition=0;
           lift.setPIDBounds(-8000, 8000);
           lift.setTargetPos(Ports::LIFT_BASE_POSITION);
           tray.setPIDBounds(-6000, 6000);
@@ -421,21 +427,112 @@ void teleop(){
         if (JoystickButtonPressed(cont, joystick_config::ARM1_BUTTON))
         {
           setSystemState(ARM1);
+          trayjoystickposition=0;
         }
         else if (JoystickButtonPressed(cont, joystick_config::ARM2_BUTTON))
         {
           setSystemState(ARM2);
+          trayjoystickposition=0;
         }
         else if (JoystickButtonPressed(cont, joystick_config::VERTICAL_BUTTON))
         {
           setSystemState(POSITION_CUBES);
+          trayjoystickposition=0;
         }
         else if (JoystickButtonPressed(cont, joystick_config::UNFOLD_BUTTON))
         {
           setSystemState(UNFOLD);
+          trayjoystickposition=0;
         }
         
+        else if (JoystickButtonPressed(cont, joystick_config::UP_BUTTON))
+        {
+          if(trayjoystickposition+Ports::ARM_CONSTANT > 0 && trayjoystickposition+Ports::ARM_CONSTANT < Ports::TRAY_VERTICAL_POSITION){
+            trayjoystickposition+=Ports::ARM_CONSTANT;
+          }
+            tray.setTargetPos(trayjoystickposition);
+        }
+        else if (JoystickButtonPressed(cont, joystick_config::DOWN_BUTTON))
+        {
+           if(trayjoystickposition-Ports::ARM_CONSTANT > 0 && trayjoystickposition-Ports::ARM_CONSTANT < Ports::TRAY_VERTICAL_POSITION){
+            trayjoystickposition-=Ports::ARM_CONSTANT;
+          }
+            tray.setTargetPos(trayjoystickposition);
+        }
+        else if (JoystickButtonPressed(cont, joystick_config::BASE_BUTTON))
+        {
+           trayjoystickposition=0;
+           setSystemState(TRAY_ZERO);
+        }
+         else if (JoystickButtonPressed(cont, joystick_config::ARM_FLIP_BUTTON))
+        {
+          setSystemState(BASE_ARM);
+          liftjoystickposition=0;
+        }
+        
+        
         break;
+      case BASE_ARM:
+        if(init_system_state)
+        {
+          liftjoystickposition=0;
+          lift.setPIDBounds(-8000, 8000);
+          lift.setTargetPos(Ports::LIFT_BASE_POSITION);
+          tray.setPIDBounds(-6000, 6000);
+          tray.setTargetPos(Ports::TRAY_BASE_POSITION);
+          init_system_state = false;
+        }
+
+        if (JoystickButtonPressed(cont, joystick_config::ARM1_BUTTON))
+        {
+          setSystemState(ARM1);
+          liftjoystickposition=0;
+        }
+        else if (JoystickButtonPressed(cont, joystick_config::ARM2_BUTTON))
+        {
+          setSystemState(ARM2);
+          liftjoystickposition=0;
+        }
+        else if (JoystickButtonPressed(cont, joystick_config::VERTICAL_BUTTON))
+        {
+          setSystemState(POSITION_CUBES);
+          liftjoystickposition=0;
+        }
+        else if (JoystickButtonPressed(cont, joystick_config::UNFOLD_BUTTON))
+        {
+          setSystemState(UNFOLD);
+          liftjoystickposition=0;
+        }
+        else if (JoystickButtonPressed(cont, joystick_config::TRAY_FLIP_BUTTON))
+        {
+          setSystemState(BASE_TRAY);
+          liftjoystickposition=0;
+        }
+       
+         else if (JoystickButtonPressed(cont, joystick_config::UP_BUTTON))
+        {
+           if(liftjoystickposition+Ports::ARM_CONSTANT > 0 && liftjoystickposition+Ports::ARM_CONSTANT < Ports::LIFT_BASE_POSITION2+100){
+            liftjoystickposition+=Ports::ARM_CONSTANT;
+          }
+            lift.setTargetPos(liftjoystickposition);
+        }
+        else if (JoystickButtonPressed(cont, joystick_config::DOWN_BUTTON))
+        {
+            if(liftjoystickposition-Ports::ARM_CONSTANT > 0 && liftjoystickposition-Ports::ARM_CONSTANT < Ports::LIFT_BASE_POSITION2+100){
+            liftjoystickposition-=Ports::ARM_CONSTANT;
+          }
+            lift.setTargetPos(liftjoystickposition);
+        }
+         else if (JoystickButtonPressed(cont, joystick_config::BASE_BUTTON))
+        {
+           setSystemState(ARM_ZERO);
+           liftjoystickposition=0;
+           trayjoystickposition=0;
+        }
+        
+        
+        break;
+
 
       case ARM1:
         if(init_system_state)
@@ -526,11 +623,12 @@ void teleop(){
         break;
     }
 
-    Brain.Screen.printAt(10, 20, true, "Tray switch: %d", tray.getLimitSwitch());
-    Brain.Screen.printAt(10, 40, true, "Cube switch: %d", tray.getCubeSwitch());
-    Brain.Screen.printAt(10, 60, true, "Lift switch: %d", lift.getLimitSwitch());
-    Brain.Screen.printAt(10, 80, true, "Tray pos: %d", tray.getTrayRotation());
+    Brain.Screen.printAt(10, 20, true, "Tray setPosition: %d", tray.getSetPosition());
+    Brain.Screen.printAt(10, 40, true, "Lift Set Position: %d", lift.getSetPosition());
+    Brain.Screen.printAt(10, 60, true, "Left Motor: %f, %f", vexDeviceMotorTemperatureGet(drive.topleftMotor), vexDeviceMotorTemperatureGet(drive.bottomleftMotor));
+    Brain.Screen.printAt(10, 80, true, "Right Motor: %f, %f", vexDeviceMotorTemperatureGet(drive.toprightMotor), vexDeviceMotorTemperatureGet(drive.bottomrightMotor));
     Brain.Screen.printAt(10, 100, true, "Lift pos: %d", lift.getLiftRotation());
+   // Brain.Screen.printAt(10, 120, true)
 
     Brain.Screen.render();
 

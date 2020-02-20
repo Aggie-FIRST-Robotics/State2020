@@ -90,8 +90,8 @@ void DriveTrain::update(DriveTrain_State state)
 {
   if(state == DRIVE)
   {
-    arcadeDrive(JoystickAxis(*controller_ptr, joystick_config::FORWARD_AXIS), 
-                JoystickAxis(*controller_ptr, joystick_config::TURN_AXIS));
+    RealDrive(JoystickAxis(*controller_ptr, joystick_config::FORWARD_AXIS), 
+                JoystickAxis(*controller_ptr, joystick_config::RIGHT_AXIS));
   }
   if(state == DRIVE_BACK_STATE){
     if(JoystickButtonPressed(*controller_ptr, joystick_config::OUTTAKE_BUTTON)){
