@@ -18,6 +18,7 @@
 #include "Tray.h"
 #include "Lift.h"
 #include "Ports.h"
+#include <iostream>
 
 void setDriveState(DriveTrain_State new_state);
 void setSystemState(System_State new_state);
@@ -121,16 +122,39 @@ void teleop(){
   setDriveState(DRIVE);
   setSystemState(UNFOLD);
 
+  std::cout << "Cool" << std::endl;
+
   timer_.clear();
+
+  unsigned int x = 0;
 
   while(true)
   {
+    ++x;
     Brain.Screen.clearScreen();
+    Brain.Screen.printAt(10, 20, true, "Tray switch: %d", tray.getLimitSwitch());
+    Brain.Screen.printAt(10, 40, true, "Cube switch: %d", tray.getCubeSwitch());
+    Brain.Screen.printAt(10, 60, true, "Lift switch: %d", lift.getLimitSwitch());
+    Brain.Screen.printAt(10, 80, true, "Tray pos: %d", tray.getTrayRotation());
+    Brain.Screen.printAt(10, 100, true, "Lift pos: %d", lift.getLiftRotation());
+    Brain.Screen.printAt(10, 120, true, "SystemState: %s", system_state_to_string(currentSystemState).c_str());
+    Brain.Screen.printAt(10, 140, true, "DriveState: %s", drive_train_state_to_string(currentDriveTrainState).c_str());
+    Brain.Screen.printAt(10, 160, true, "Time: %d", x);
+    Brain.Screen.printAt(10, 180, true, "Spot1");
+    Brain.Screen.render();
 
     drive.update(currentDriveTrainState);
+    Brain.Screen.printAt(10, 180, true, "Spot4");
+    Brain.Screen.render();
     intake.update(currentSystemState);
+    Brain.Screen.printAt(10, 180, true, "Spot5");
+    Brain.Screen.render();
     lift.update(currentSystemState);
+    Brain.Screen.printAt(10, 180, true, "Spot6");
+    Brain.Screen.render();
     tray.update(currentSystemState);
+    Brain.Screen.printAt(10, 180, true, "Spot7");
+    Brain.Screen.render();
 
     switch(currentDriveTrainState)
     {
@@ -144,7 +168,7 @@ void teleop(){
         break;
 
     }
-
+    Brain.Screen.printAt(10, 180, true, "Spot2");
     switch(currentSystemState)
     {
       case UNFOLD:
@@ -155,7 +179,7 @@ void teleop(){
           timer_.clear();
           init_system_state = false;
         }
-          setSystemState(UNFOLD_ARM_ZERO);
+         setSystemState(UNFOLD_ARM_ZERO);
 
         if(timer_.time(sec) > Ports::UNFOLD_TIME)
         {
@@ -171,7 +195,7 @@ void teleop(){
           tray.stopPID();
           init_system_state = false;
         }
-        setSystemState(ARM_ZERO);
+       setSystemState(ARM_ZERO);
         if(lift.getLimitSwitch())
         {
           lift.zeroEncoder();
@@ -187,7 +211,7 @@ void teleop(){
           tray.setTargetPos(Ports::TRAY_BASE_POSITION);
           init_system_state = false;
         }
-        setSystemState(BASE);
+       setSystemState(BASE);
 
 
         if(lift.getLimitSwitch())
@@ -331,13 +355,13 @@ void teleop(){
         break;
     }
 
-    Brain.Screen.printAt(10, 20, true, "Tray switch: %d", tray.getLimitSwitch());
-    Brain.Screen.printAt(10, 40, true, "Cube switch: %d", tray.getCubeSwitch());
-    Brain.Screen.printAt(10, 60, true, "Lift switch: %d", lift.getLimitSwitch());
-    Brain.Screen.printAt(10, 80, true, "Tray pos: %d", tray.getTrayRotation());
-    Brain.Screen.printAt(10, 100, true, "Lift pos: %d", lift.getLiftRotation());
+    Brain.Screen.printAt(10, 180, true, "Spot3");
+    Brain.Screen.render();
+
+    
 
     Brain.Screen.render();
+    std::cout << "Time " << x << std::endl;
 
     this_thread::sleep_for(10);
   }

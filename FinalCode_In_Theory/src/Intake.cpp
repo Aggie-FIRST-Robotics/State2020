@@ -15,11 +15,11 @@ Intake::Intake(int intakeport,
 
 void Intake::moveConst(int32_t speed)
 {
+  Brain.Screen.printAt(10, 200, true, "Speed: %d", speed);
   vexDeviceMotorVoltageSet(intake, -speed);
   vexDeviceMotorVoltageSet(intake1, speed);
   vexDeviceMotorVoltageSet(intake2, -speed);
   vexDeviceMotorVoltageSet(intake3, speed);
-
 }
 
 void Intake::joystickIntake(int32_t power)
