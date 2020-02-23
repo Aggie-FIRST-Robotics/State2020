@@ -72,15 +72,11 @@ void Intake::update(System_State state)
 
 void Intake::updateAuto(Auto_State state)
 {
-  if(state == FORWARD ||
-     state == MORE_FORWARD ||
-     state == TURN_ONE ||
-     state == LEFT ||
-     state == RIGHT)
+  if(state == FORWARD)
   {
     moveConst(12000);
   }
-  else if(state == POSITION_CUBES_AUTO)
+  else if(state == POSITION_CUBES_AUTO || state == POSITION_CUBES_MORE_AUTO)
   {
     moveConst(-9000);
   }

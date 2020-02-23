@@ -41,14 +41,18 @@ void Tray::zeroEncoder()
   traymotor_base = vexDeviceMotorPositionGet(traymotor);
 }
 
-void Tray::update(System_State state)
+void Tray::update(System_State state, bool go)
 {
   if(state == TRAY_ZERO)
   {
     moveConst(-6000);
   }
+  if(state == BASE_TRAY){
+    if(go){
+      movePID();
+    }
+  }
   else if (state == BASE_ARM || 
-          state == BASE_TRAY ||
           state == ARM1 || 
           state == ARM2 || 
           state == POSITION_CUBES ||

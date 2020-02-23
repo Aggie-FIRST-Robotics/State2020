@@ -90,12 +90,17 @@ void DriveTrain::update(DriveTrain_State state)
 {
   if(state == DRIVE)
   {
-    RealDrive(JoystickAxis(*controller_ptr, joystick_config::FORWARD_AXIS), 
-                JoystickAxis(*controller_ptr, joystick_config::RIGHT_AXIS));
+    arcadeDrive((JoystickAxis(*controller_ptr, joystick_config::FORWARD_AXIS)), 
+                JoystickAxis(*controller_ptr, joystick_config::TURN_AXIS));
   }
   if(state == DRIVE_BACK_STATE){
     if(JoystickButtonPressed(*controller_ptr, joystick_config::OUTTAKE_BUTTON)){
-        setPower(-4000, -4000);
+        arcadeDrive((JoystickAxis(*controller_ptr, joystick_config::FORWARD_AXIS)) - 73, 
+                  JoystickAxis(*controller_ptr, joystick_config::TURN_AXIS));
+    }
+    else{
+      arcadeDrive((JoystickAxis(*controller_ptr, joystick_config::FORWARD_AXIS)), 
+                  JoystickAxis(*controller_ptr, joystick_config::TURN_AXIS));
     }
   }
 }
@@ -103,11 +108,6 @@ void DriveTrain::update(DriveTrain_State state)
 void DriveTrain::updateAuto(Auto_State state)
 {
   if(state == FORWARD ||
-      state == MORE_FORWARD ||
-      state == TURN_ONE ||
-      state == LEFT ||
-      state == RIGHT ||
-      state == TURN_TWO ||
       state == BACK ||
       state == CLEAR ||
       state == TURN_THREE ||

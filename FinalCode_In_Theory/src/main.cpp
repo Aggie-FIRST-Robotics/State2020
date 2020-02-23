@@ -52,6 +52,7 @@ Intake intake(Ports::INTAKE_PORT_0,
 Lift lift(Ports::LIFT_PORT_0, 
           Ports::LIFT_PORT_1, 
           &(tri.C),
+          &(tri.D),
           &Brain);
 
 Tray tray(Ports::TRAY_PORT_0, 
@@ -63,7 +64,7 @@ Tray tray(Ports::TRAY_PORT_0,
 vex::timer timer_;
 
   const AutoDriveConfig stop(1, 1, 0);
-  const AutoDriveConfig s1(36*DriveTrain::TICKS_PER_IN, 36*DriveTrain::TICKS_PER_IN, 30*DriveTrain::TICKS_PER_IN);
+  const AutoDriveConfig s1(42*DriveTrain::TICKS_PER_IN, 42*DriveTrain::TICKS_PER_IN, 30*DriveTrain::TICKS_PER_IN);
   const AutoDriveConfig s2(6*DriveTrain::TICKS_PER_IN, 6*DriveTrain::TICKS_PER_IN, 20*DriveTrain::TICKS_PER_IN);
   const AutoDriveConfig s3(11.5*DriveTrain::TICKS_PER_IN, -11.5*DriveTrain::TICKS_PER_IN, 30*DriveTrain::TICKS_PER_IN);
   const AutoDriveConfig s4(24*DriveTrain::TICKS_PER_IN, 24*DriveTrain::TICKS_PER_IN, 30*DriveTrain::TICKS_PER_IN);
@@ -75,248 +76,182 @@ vex::timer timer_;
   const AutoDriveConfig s10(36*DriveTrain::TICKS_PER_IN, 36*DriveTrain::TICKS_PER_IN, 30*DriveTrain::TICKS_PER_IN);
 
 void autonomous(){
-  setAutoState(FORWARD);
+  drive.setPower(6000, 6000);
+  this_thread::sleep_for(2000);
+  drive.setPower(-6000, -6000);
+  this_thread::sleep_for(2000);
+  drive.setPower(0, 0);
+  // setAutoState(FORWARD);
   
-  while(true)
-  { 
+  // while(true)
+  // { 
 
-    switch(currentAutoState)
-    {
-      case(FORWARD):
-        if(init_auto_state)
-        {
-          drive.getAutoDrive().initDrive(&s1, 
-                                         &stop, 
-                                         2*DriveTrain::TICKS_PER_IN, 
-                                         1*DriveTrain::TICKS_PER_IN);
-          init_auto_state = false;
-        }
+  //   switch(currentAutoState)
+  //   {
+  //     case(FORWARD):
+  //       if(init_auto_state)
+  //       {
+  //         drive.getAutoDrive().initDrive(&s1, 
+  //                                        &stop, 
+  //                                        2*DriveTrain::TICKS_PER_IN, 
+  //                                        1*DriveTrain::TICKS_PER_IN);
+  //         init_auto_state = false;
+  //       }
 
-        if(drive.getAutoDrive().complete())
-        {
-          setAutoState(MORE_FORWARD);
-        }
+  //       if(drive.getAutoDrive().complete())
+  //       {
+  //         setAutoState(BACK);
+  //       }
 
-        break;
+  //       break;
 
-      case(MORE_FORWARD):
-        if(init_auto_state)
-        {
-          drive.getAutoDrive().initDrive(&s2, 
-                                         &stop, 
-                                         2*DriveTrain::TICKS_PER_IN, 
-                                         1*DriveTrain::TICKS_PER_IN);
-          init_auto_state = false;
-        }
-        
-        if(drive.getAutoDrive().complete())
-        {
-          setAutoState(TURN_ONE);
-        }
-
-        break;
-
-      case(TURN_ONE):
-        if(init_auto_state)
-        {
-          drive.getAutoDrive().initDrive(&s3, 
-                                         &stop, 
-                                         1*DriveTrain::TICKS_PER_IN, 
-                                         1*DriveTrain::TICKS_PER_IN);          
-          init_auto_state = false;
-        }
-        
-        if(drive.getAutoDrive().complete())
-        {
-          setAutoState(LEFT);
-        }
-
-        break;
-
-      case(LEFT):
-        if(init_auto_state)
-        {
-          drive.getAutoDrive().initDrive(&s4, 
-                                         &stop, 
-                                         2*DriveTrain::TICKS_PER_IN, 
-                                         1*DriveTrain::TICKS_PER_IN);          
-          init_auto_state = false;
-        }
-        
-        if(drive.getAutoDrive().complete())
-        {
-          setAutoState(RIGHT);
-        }
-
-        break;
-
-      case(RIGHT):
-        if(init_auto_state)
-        {
-          drive.getAutoDrive().initDrive(&s5, 
-                                         &stop, 
-                                         2*DriveTrain::TICKS_PER_IN, 
-                                         1*DriveTrain::TICKS_PER_IN);          
-          init_auto_state = false;
-        }
-     
-        if(drive.getAutoDrive().complete())
-        {
-          setAutoState(TURN_TWO);
-        }
-
-        break;
-
-      case(TURN_TWO):
-        if(init_auto_state)
-        {
-          drive.getAutoDrive().initDrive(&s6, 
-                                         &stop, 
-                                         1*DriveTrain::TICKS_PER_IN, 
-                                         1*DriveTrain::TICKS_PER_IN);          
-          init_auto_state = false;
-        }
+  //     case(BACK):
+  //       if(init_auto_state)
+  //       {
+  //         drive.getAutoDrive().initDrive(&s7, 
+  //                                        &stop, 
+  //                                        2*DriveTrain::TICKS_PER_IN, 
+  //                                        1*DriveTrain::TICKS_PER_IN);          
+  //         init_auto_state = false;
+  //       }
              
-        if(drive.getAutoDrive().complete())
-        {
-          setAutoState(BACK);
-        }
+  //       if(drive.getAutoDrive().complete())
+  //       {
+  //         setAutoState(CLEAR);
+  //       }
 
-        break;
+  //       break;
 
-      case(BACK):
-        if(init_auto_state)
-        {
-          drive.getAutoDrive().initDrive(&s7, 
-                                         &stop, 
-                                         2*DriveTrain::TICKS_PER_IN, 
-                                         1*DriveTrain::TICKS_PER_IN);          
-          init_auto_state = false;
-        }
-             
-        if(drive.getAutoDrive().complete())
-        {
-          setAutoState(CLEAR);
-        }
+  //     case(CLEAR):
+  //       if(init_auto_state)
+  //       {
+  //         drive.getAutoDrive().initDrive(&s8, 
+  //                                        &stop, 
+  //                                        1*DriveTrain::TICKS_PER_IN, 
+  //                                        1*DriveTrain::TICKS_PER_IN);          
+  //         init_auto_state = false;
+  //       }
 
-        break;
+  //       if(drive.getAutoDrive().complete())
+  //       {
+  //         setAutoState(TURN_THREE);
+  //       }
 
-      case(CLEAR):
-        if(init_auto_state)
-        {
-          drive.getAutoDrive().initDrive(&s8, 
-                                         &stop, 
-                                         1*DriveTrain::TICKS_PER_IN, 
-                                         1*DriveTrain::TICKS_PER_IN);          
-          init_auto_state = false;
-        }
+  //       break;
 
-        if(drive.getAutoDrive().complete())
-        {
-          setAutoState(TURN_THREE);
-        }
+  //     case(TURN_THREE):
+  //       if(init_auto_state)
+  //       {
+  //         drive.getAutoDrive().initDrive(&s9, 
+  //                                        &stop, 
+  //                                        1*DriveTrain::TICKS_PER_IN, 
+  //                                        1*DriveTrain::TICKS_PER_IN);          
+  //         init_auto_state = false;
+  //       }
 
-        break;
+  //       if(drive.getAutoDrive().complete())
+  //       {
+  //         setAutoState(TO_STACK);
+  //       }
 
-      case(TURN_THREE):
-        if(init_auto_state)
-        {
-          drive.getAutoDrive().initDrive(&s9, 
-                                         &stop, 
-                                         1*DriveTrain::TICKS_PER_IN, 
-                                         1*DriveTrain::TICKS_PER_IN);          
-          init_auto_state = false;
-        }
+  //       break;
 
-        if(drive.getAutoDrive().complete())
-        {
-          setAutoState(TO_STACK);
-        }
+  //     case(TO_STACK):
+  //       if(init_auto_state)
+  //       {
+  //         drive.getAutoDrive().initDrive(&s10, 
+  //                                        &stop, 
+  //                                        2*DriveTrain::TICKS_PER_IN, 
+  //                                        1*DriveTrain::TICKS_PER_IN);          
+  //         init_auto_state = false;
+  //       }
 
-        break;
+  //       if(drive.getAutoDrive().complete())
+  //       {
+  //         setAutoState(POSITION_CUBES_AUTO);
+  //       }
 
-      case(TO_STACK):
-        if(init_auto_state)
-        {
-          drive.getAutoDrive().initDrive(&s10, 
-                                         &stop, 
-                                         2*DriveTrain::TICKS_PER_IN, 
-                                         1*DriveTrain::TICKS_PER_IN);          
-          init_auto_state = false;
-        }
+  //       break;
 
-        if(drive.getAutoDrive().complete())
-        {
-          setAutoState(POSITION_CUBES_AUTO);
-        }
+  //     case(POSITION_CUBES_AUTO):
+  //       if(init_auto_state)
+  //       {
 
-        break;
+  //         init_auto_state = false;
+  //       }
 
-      case(POSITION_CUBES_AUTO):
-        if(init_auto_state)
-        {
+  //       if(tray.getCubeSwitch())
+  //       {
+  //         setAutoState(POSITION_CUBES_MORE_AUTO);
+  //       }
 
-          init_auto_state = false;
-        }
+  //       break;
 
-        if(tray.getCubeSwitch())
-        {
-          setAutoState(TRAY_VERTICAL_AUTO);
-        }
+  //     case(POSITION_CUBES_MORE_AUTO):
+  //       if(init_auto_state)
+  //       {
+  //         timer_.clear();
+  //         init_auto_state = false;
+  //       }
 
-        break;
+  //       if(timer_.time() > 50)
+  //       {
+  //         setAutoState(TRAY_VERTICAL_AUTO);
+  //       }
 
-      case(TRAY_VERTICAL_AUTO):
-        if(init_auto_state)
-        {
-          tray.zeroEncoder();
-          tray.setPIDBounds(-6000, 6000);
-          tray.setTargetPos(Ports::TRAY_VERTICAL_POSITION);
-          timer_.clear();
-          init_auto_state = false;
-        }
+  //       break;
 
-        if(timer_.time() > 5000)
-        {
-          setAutoState(OUTTAKE);
-        }
+  //     case(TRAY_VERTICAL_AUTO):
+  //       if(init_auto_state)
+  //       {
+  //         tray.zeroEncoder();
+  //         tray.setPIDBounds(-6000, 6000);
+  //         tray.setTargetPos(Ports::TRAY_VERTICAL_POSITION);
+  //         timer_.clear();
+  //         init_auto_state = false;
+  //       }
 
-        break;
+  //       if(timer_.time() > 5000)
+  //       {
+  //         setAutoState(OUTTAKE);
+  //       }
 
-      case(OUTTAKE):
-        if(init_auto_state)
-        {
-          tray.setPIDBounds(-6000, 6000);
-          tray.setTargetPos(Ports::TRAY_VERTICAL_POSITION);
-          timer_.clear();
-          init_auto_state = false;
-        }
+  //       break;
 
-        if(timer_.time() > 5000)
-        {
-          setAutoState(STOP_AUTO);
-        }
+  //     case(OUTTAKE):
+  //       if(init_auto_state)
+  //       {
+  //         tray.setPIDBounds(-6000, 6000);
+  //         tray.setTargetPos(Ports::TRAY_VERTICAL_POSITION);
+  //         timer_.clear();
+  //         init_auto_state = false;
+  //       }
 
-        break;
+  //       if(timer_.time() > 5000)
+  //       {
+  //         setAutoState(STOP_AUTO);
+  //       }
 
-      case(STOP_AUTO):
-        if(init_auto_state)
-        {
-          tray.setPIDBounds(-6000, 6000);
-          tray.setTargetPos(Ports::TRAY_BASE_POSITION);
-          timer_.clear();
-          init_auto_state = false;
-        }
+  //       break;
 
-        break;
-    }
+  //     case(STOP_AUTO):
+  //       if(init_auto_state)
+  //       {
+  //         tray.setPIDBounds(-6000, 6000);
+  //         tray.setTargetPos(Ports::TRAY_BASE_POSITION);
+  //         timer_.clear();
+  //         init_auto_state = false;
+  //       }
 
-    drive.updateAuto(currentAutoState);
-    intake.updateAuto(currentAutoState);
-    tray.updateAuto(currentAutoState);
+  //       break;
+  //   }
 
-    this_thread::sleep_for(10);
-  }
+  //   drive.updateAuto(currentAutoState);
+  //   intake.updateAuto(currentAutoState);
+  //   tray.updateAuto(currentAutoState);
+
+  //   this_thread::sleep_for(10);
+  // }
 }
 
 void teleop(){
@@ -324,6 +259,8 @@ void teleop(){
   setSystemState(UNFOLD);
 
   timer_.clear();
+  bool lift_go = true;
+  bool tray_go = true;
 
   while(true)
   {
@@ -332,8 +269,8 @@ void teleop(){
     drive.update(currentDriveTrainState);
     //drive.updateSystemState(currentSystemState);
     intake.update(currentSystemState);
-    lift.update(currentSystemState);
-    tray.update(currentSystemState);
+    lift.update(currentSystemState, lift_go);
+    tray.update(currentSystemState, tray_go);
 
     switch(currentDriveTrainState)
     {
@@ -374,11 +311,15 @@ void teleop(){
           init_system_state = false;
         }
 
-        if(lift.getLimitSwitch())
+        if(lift.isZeroed())
         {
+          setSystemState(TRAY_ZERO);
+        }
+        if(JoystickButtonPressed(cont, joystick_config::INTAKE_BUTTON)){
           lift.zeroEncoder();
           setSystemState(TRAY_ZERO);
         }
+
         break;
 
       case ARM_ZERO:
@@ -390,11 +331,15 @@ void teleop(){
           init_system_state = false;
         }
 
-        if(lift.getLimitSwitch())
+        if(lift.isZeroed())
         {
-          lift.zeroEncoder();
-          setSystemState(BASE_TRAY);
+          setSystemState(TRAY_ZERO);
         }
+        if(JoystickButtonPressed(cont, joystick_config::INTAKE_BUTTON)){
+          lift.zeroEncoder();
+          setSystemState(TRAY_ZERO);
+        }
+        
         break;
 
       case TRAY_ZERO:
@@ -407,6 +352,11 @@ void teleop(){
         }
 
         if(tray.getLimitSwitch())
+        {
+          tray.zeroEncoder();
+          setSystemState(BASE_TRAY);
+        }
+         if(JoystickButtonPressed(cont, joystick_config::INTAKE_BUTTON))
         {
           tray.zeroEncoder();
           setSystemState(BASE_TRAY);
@@ -445,21 +395,23 @@ void teleop(){
           trayjoystickposition=0;
         }
         
-        else if (JoystickButtonPressed(cont, joystick_config::UP_BUTTON))
-        {
-          if(trayjoystickposition+Ports::ARM_CONSTANT > 0 && trayjoystickposition+Ports::ARM_CONSTANT < Ports::TRAY_VERTICAL_POSITION){
-            trayjoystickposition+=Ports::ARM_CONSTANT;
-          }
-            tray.setTargetPos(trayjoystickposition);
+        else if (JoystickButtonPressed(cont, joystick_config::UP_BUTTON)){
+          tray_go = false;
+          tray.moveConst(12000);
         }
-        else if (JoystickButtonPressed(cont, joystick_config::DOWN_BUTTON))
-        {
-           if(trayjoystickposition-Ports::ARM_CONSTANT > 0 && trayjoystickposition-Ports::ARM_CONSTANT < Ports::TRAY_VERTICAL_POSITION){
-            trayjoystickposition-=Ports::ARM_CONSTANT;
-          }
-            tray.setTargetPos(trayjoystickposition);
+        else if (JoystickButtonPressed(cont, joystick_config::DOWN_BUTTON)){
+          tray_go = false;
+           tray.moveConst(-12000);
         }
-        else if (JoystickButtonPressed(cont, joystick_config::BASE_BUTTON))
+        else{
+          if(!tray_go){
+            tray_go = true;
+            tray.setTargetPos(tray.getTrayRotation());
+          }
+        }
+
+
+        if (JoystickButtonPressed(cont, joystick_config::BASE_BUTTON))
         {
            trayjoystickposition=0;
            setSystemState(TRAY_ZERO);
@@ -509,21 +461,25 @@ void teleop(){
           liftjoystickposition=0;
         }
        
-         else if (JoystickButtonPressed(cont, joystick_config::UP_BUTTON))
-        {
-           if(liftjoystickposition+Ports::ARM_CONSTANT > 0 && liftjoystickposition+Ports::ARM_CONSTANT < Ports::LIFT_BASE_POSITION2+100){
-            liftjoystickposition+=Ports::ARM_CONSTANT;
-          }
-            lift.setTargetPos(liftjoystickposition);
+        else if (JoystickButtonPressed(cont, joystick_config::UP_BUTTON)){
+          lift_go = false;
+          int32_t speed = 12000;
+          lift.moveConst(speed, speed);
         }
-        else if (JoystickButtonPressed(cont, joystick_config::DOWN_BUTTON))
-        {
-            if(liftjoystickposition-Ports::ARM_CONSTANT > 0 && liftjoystickposition-Ports::ARM_CONSTANT < Ports::LIFT_BASE_POSITION2+100){
-            liftjoystickposition-=Ports::ARM_CONSTANT;
-          }
-            lift.setTargetPos(liftjoystickposition);
+        else if (JoystickButtonPressed(cont, joystick_config::DOWN_BUTTON)){
+          lift_go = false;
+          int32_t speed = -12000;
+          lift.moveConst(speed, speed);
         }
-         else if (JoystickButtonPressed(cont, joystick_config::BASE_BUTTON))
+        else{
+          if(!lift_go){
+            lift_go = true;
+            lift.setTargetPos(lift.getLeftLiftRotation());
+          }
+        }
+
+
+        if (JoystickButtonPressed(cont, joystick_config::BASE_BUTTON))
         {
            setSystemState(ARM_ZERO);
            liftjoystickposition=0;
@@ -583,7 +539,7 @@ void teleop(){
           lift.setPIDBounds(-8000, 8000);
           lift.setTargetPos(Ports::LIFT_BASE_POSITION);
           tray.setPIDBounds(-6000, 6000);
-          tray.setTargetPos(Ports::TRAY_BASE_POSITION);
+          // tray.setTargetPos(Ports::TRAY_BASE_POSITION);
           timer_.clear();
           init_system_state = false;
         }
@@ -624,10 +580,25 @@ void teleop(){
     }
 
     Brain.Screen.printAt(10, 20, true, "Tray setPosition: %d", tray.getSetPosition());
-    Brain.Screen.printAt(10, 40, true, "Lift Set Position: %d", lift.getSetPosition());
+    Brain.Screen.printAt(10, 40, true, "Lift Set Position: %d, %d", lift.getLeftSetPosition(), lift.getRightSetPosition());
     Brain.Screen.printAt(10, 60, true, "Left Motor: %f, %f", vexDeviceMotorTemperatureGet(drive.topleftMotor), vexDeviceMotorTemperatureGet(drive.bottomleftMotor));
     Brain.Screen.printAt(10, 80, true, "Right Motor: %f, %f", vexDeviceMotorTemperatureGet(drive.toprightMotor), vexDeviceMotorTemperatureGet(drive.bottomrightMotor));
-    Brain.Screen.printAt(10, 100, true, "Lift pos: %d", lift.getLiftRotation());
+    Brain.Screen.printAt(10, 100, true, "Lift pos: %d, %d", lift.getLeftLiftRotation(), lift.getRightLiftRotation());
+    Brain.Screen.printAt(10, 120, true, "SystemState: %s", system_state_to_string(currentSystemState).c_str());
+    Brain.Screen.printAt(10, 140, true, "DriveState: %s", drive_train_state_to_string(currentDriveTrainState).c_str());
+    Brain.Screen.printAt(10, 160, true, "Limit %d", lift.getLimitSwitch());
+    Brain.Screen.printAt(10, 180, true, "Limit Left %d, %d", lift.getLeftLimitSwitch(), lift.getRightLimitSwitch());
+    Brain.Screen.printAt(10, 200, true, "Base val: %.2f, %.2f", lift.lift_left_base, lift.lift_right_base);
+    Brain.Screen.printAt(10, 220, true, "Actual Lift: %d, %d", vexDeviceMotorPositionRawGet(lift.lift_motor_left, nullptr), vexDeviceMotorPositionRawGet(lift.lift_motor_right, nullptr));
+
+  /*  cont.Screen.clearScreen();
+    cont.Screen.setCursor(0, 0);
+    cont.Screen.print("L %.0f %.0f", vexDeviceMotorTemperatureGet(drive.topleftMotor), vexDeviceMotorTemperatureGet(drive.bottomleftMotor));
+    cont.Screen.newLine();
+    cont.Screen.print("R %.0f %.0f", vexDeviceMotorTemperatureGet(drive.toprightMotor), vexDeviceMotorTemperatureGet(drive.bottomrightMotor));
+    cont.Screen.newLine();   
+    cont.Screen.print("T %d L %d", tray.getSetPosition(), lift.getSetPosition());*/
+ 
    // Brain.Screen.printAt(10, 120, true)
 
     Brain.Screen.render();

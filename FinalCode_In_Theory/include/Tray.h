@@ -23,7 +23,7 @@ public:
 
   void zeroEncoder();
 
-  void update(System_State state);
+  void update(System_State state, bool go);
   void updateAuto(Auto_State state);
 
   bool getLimitSwitch();
