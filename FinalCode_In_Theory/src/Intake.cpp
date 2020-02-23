@@ -1,25 +1,25 @@
 #include "Intake.h"
 
-Intake::Intake(int intakeport, 
-               int intake1port, 
-               int intake2port,
-               int intake3port,
+Intake::Intake(int intakeport_left1, 
+               int intakeport_left2, 
+               int intakeport_right1, 
+               int intakeport_right2, 
                vex::controller *controller_p) : 
-  intake(vexDeviceGetByIndex(intakeport - 1)), 
-  intake1(vexDeviceGetByIndex(intake1port - 1)),
-  intake2(vexDeviceGetByIndex(intake2port - 1)),
-  intake3(vexDeviceGetByIndex(intake3port - 1)),
+  toggle_on(true), 
+  intakeleft1(vexDeviceGetByIndex(intakeport_left1 - 1)), 
+  intakeleft2(vexDeviceGetByIndex(intakeport_left2 - 1)),
+  intakeright1(vexDeviceGetByIndex(intakeport_right1 - 1)), 
+  intakeright2(vexDeviceGetByIndex(intakeport_right2 - 1)),
   controller_ptr(controller_p)
 {
 }
 
 void Intake::moveConst(int32_t speed)
 {
-  Brain.Screen.printAt(10, 200, true, "Speed: %d", speed);
-  vexDeviceMotorVoltageSet(intake, -speed);
-  vexDeviceMotorVoltageSet(intake1, speed);
-  vexDeviceMotorVoltageSet(intake2, -speed);
-  vexDeviceMotorVoltageSet(intake3, speed);
+  vexDeviceMotorVoltageSet(intakeleft1, speed);
+  vexDeviceMotorVoltageSet(intakeleft2, speed);
+  vexDeviceMotorVoltageSet(intakeright1, -speed);
+  vexDeviceMotorVoltageSet(intakeright2, -speed);
 }
 
 void Intake::joystickIntake(int32_t power)
@@ -32,10 +32,15 @@ void Intake::joystickIntake(int32_t power)
   {
     moveConst(-power);
   }
-  else
-  {  
+  else if(toggle_on)
+  {
+    moveConst(6000);
+  }
+  else{
     moveConst(0);
   }
+
+  
 }
 
 void Intake::update(System_State state)
@@ -44,7 +49,8 @@ void Intake::update(System_State state)
   {
     moveConst(-12000);
   }
-  else if (state == BASE || 
+  else if (state == BASE_ARM || 
+            state == BASE_TRAY || 
             state == ARM1 || 
             state == ARM2)
   {
@@ -54,8 +60,43 @@ void Intake::update(System_State state)
   {
     moveConst(-6000);
   }
+  else if (state == BASE_ARM || state == BASE_TRAY) {
+  
+  }
   else if(state == TRAY_VERTICAL)
   {
     joystickIntake(6000);
+  }
+
+  if(!JoystickButtonPressed(*controller_ptr, joystick_config::TOGGLE_BUTTON)){
+    toggle_pressed = false;
+  }
+  if(!toggle_pressed && JoystickButtonPressed(*controller_ptr, joystick_config::TOGGLE_BUTTON)){
+    toggle_pressed = true;
+    toggle_on = !toggle_on;
+  }
+}
+
+void Intake::updateAuto(Auto_State state)
+{
+  if(state == FORWARD ||
+     state == MORE_FORWARD ||
+     state == TURN_ONE ||
+     state == LEFT ||
+     state == RIGHT)
+  {
+    moveConst(12000);
+  }
+  else if(state == POSITION_CUBES_AUTO)
+  {
+    moveConst(-9000);
+  }
+  else if(state == OUTTAKE)
+  {
+    moveConst(-6000);
+  }
+  else
+  {
+    moveConst(0);
   }
 }

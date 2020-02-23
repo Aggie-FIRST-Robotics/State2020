@@ -41,13 +41,18 @@ void Tray::zeroEncoder()
   traymotor_base = vexDeviceMotorPositionGet(traymotor);
 }
 
-void Tray::update(System_State state)
+void Tray::update(System_State state, bool go)
 {
   if(state == TRAY_ZERO)
   {
     moveConst(-6000);
   }
-  else if (state == BASE || 
+  if(state == BASE_TRAY){
+    if(go){
+      movePID();
+    }
+  }
+  else if (state == BASE_ARM || 
           state == ARM1 || 
           state == ARM2 || 
           state == POSITION_CUBES ||
@@ -98,4 +103,21 @@ void Tray::setTargetPos(int32_t target)
 void Tray::stopPID()
 {
   tray_pid.stop();
+}
+
+int32_t Tray::getSetPosition(){
+  return tray_pid.getTarget();
+}
+
+void Tray::updateAuto(Auto_State state)
+{
+  if(state == TRAY_VERTICAL_AUTO ||
+     state == OUTTAKE)
+  {
+    movePID();
+  }
+  else
+  {
+    moveConst(0);
+  }
 }

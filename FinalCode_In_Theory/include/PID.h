@@ -105,6 +105,10 @@ public:
     time.clear();
   }
 
+  T getTarget(){
+    return target;
+  }
+
 private:
   T p_term;
   T i_term;

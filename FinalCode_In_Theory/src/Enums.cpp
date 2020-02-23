@@ -21,8 +21,10 @@ std::string system_state_to_string(System_State state){
       return std::string{"UNFOLD_ARM_ZERO"};
     case TRAY_ZERO:
       return std::string{"TRAY_ZERO"};
-    case BASE:
-      return std::string{"BASE"};
+    case BASE_ARM:
+      return std::string{"BASE ARM"};
+    case BASE_TRAY:
+      return std::string{"BASE TRAY"};
     case ARM1:
       return std::string{"ARM1"};
     case ARM2:

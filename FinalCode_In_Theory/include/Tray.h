@@ -23,7 +23,8 @@ public:
 
   void zeroEncoder();
 
-  void update(System_State state);
+  void update(System_State state, bool go);
+  void updateAuto(Auto_State state);
 
   bool getLimitSwitch();
 
@@ -37,6 +38,7 @@ public:
 
   void stopPID();
 
+  int32_t getSetPosition();
 private:
   V5_DeviceT traymotor;
   V5_DeviceT traymotor1;
@@ -50,6 +52,7 @@ private:
   static constexpr double P = 100;
   static constexpr double I = 10;
   static constexpr double D = 0;
+  
 
   void setMotors(int32_t input);
 };
